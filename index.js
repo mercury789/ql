@@ -18,14 +18,14 @@ function clear() {
 function video(mode) {
 
    const videos = {
-      task: 60,
+      task: 36,
       absolute: 2,
       win: 5,
-      lose: 4,
+      lose: 5,
       upgrade: 1,
       comeback: 6,
       recordWin: 9,
-      recordLose: 3
+      recordLose: 3,
    };
 
    function random(mode) {
@@ -1059,16 +1059,6 @@ document.addEventListener("click", (event) => {
 
    }
 
-   // if (event.target.closest("[data-export]")) {
-   //    let baseClean = get('base')
-   //    let statClean = get('stat')
-
-   //    event.target.style.backgroundColor = '#112A21'
-
-   //    const copy = barData;
-   //    navigator.clipboard.writeText(`${JSON.stringify(copy)}#${baseClean}#${statClean}`);
-
-   // }
 
    if (event.target.closest("[data-export]")) {
       const base = get('base');
@@ -1086,6 +1076,8 @@ document.addEventListener("click", (event) => {
 
       const copy = barData;
       const content = `${JSON.stringify(copy)}#${base}#${stat}#${bgRang}`;
+      navigator.clipboard.writeText(content);
+
 
       // Создаем Blob (файл в памяти)
       const blob = new Blob([content], { type: "text/plain" });
@@ -1603,7 +1595,7 @@ document.addEventListener("click", (event) => {
 
    const targ = event.target
 
-   if (targ.closest("[data-mark]") && !targ.closest("[data-shell]").classList.contains('_rename')) {
+   if (targ.closest("[data-mark]") && !targ.closest("[data-shell]").classList.contains('_rename') && !targ.closest("[data-shell]").classList.contains('_delete')) {
 
       const targShell = targ.closest("[data-mark]").closest("[data-shell]")
       const targNum = targShell.querySelector('[data-num]')
@@ -1631,6 +1623,8 @@ document.addEventListener("click", (event) => {
          targShell.querySelector("[data-info]").style = `color: rgb(75, 192, 192);`
 
          video('task')
+         console.log('task');
+         
 
       }
 
