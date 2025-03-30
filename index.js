@@ -1868,13 +1868,10 @@ fileInput.addEventListener('change', function () {
          set('taskBody', parts[4])
 
          console.log(`BGRANG: ${parts[3]}`);
-
-
+         
          location.reload(true);
 
-
       };
-
 
    }
 });
