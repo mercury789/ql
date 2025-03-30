@@ -314,11 +314,11 @@ video img {
 [data-body]._active {
    display: block;
 }
-[data-task-body] {
+[data-task-main] {
    overflow-y: auto; 
    height: 386px;
 }
-[data-task-body]._active {
+[data-task-main]._active {
    display: none
 }
 

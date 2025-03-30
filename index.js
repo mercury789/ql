@@ -283,11 +283,11 @@ document.addEventListener("click", (event) => {
 
       if (document.querySelector('[data-body]').classList.contains('_active')) {
          document.querySelector('[data-body]').classList.remove('_active')
-         document.querySelector('[data-task-body]').classList.remove('_active')
+         document.querySelector('[data-task-main]').classList.remove('_active')
 
       } else {
          document.querySelector('[data-body]').classList.add('_active')
-         document.querySelector('[data-task-body]').classList.add('_active')
+         document.querySelector('[data-task-main]').classList.add('_active')
       }
 
 
