@@ -18,7 +18,7 @@ function clear() {
 function video(mode) {
 
    const videos = {
-      task: 36,
+      task: 32,
       absolute: 2,
       win: 5,
       lose: 5,
@@ -1075,7 +1075,7 @@ document.addEventListener("click", (event) => {
       event.target.style.backgroundColor = '#112A21';
 
       const copy = barData;
-      const content = `${JSON.stringify(copy)}#${base}#${stat}#${bgRang}`;
+      const content = `${JSON.stringify(copy)}@${base}@${stat}@${bgRang}`;
       navigator.clipboard.writeText(content);
 
 
@@ -1624,7 +1624,7 @@ document.addEventListener("click", (event) => {
 
          video('task')
          console.log('task');
-         
+
 
       }
 
@@ -1691,7 +1691,7 @@ document.addEventListener("click", (event) => {
          event.target.style.backgroundColor = '#112A21';
 
          const copy = barData;
-         const content = `${JSON.stringify(copy)}#${base}#${stat}#${bgRang}`;
+         const content = `${JSON.stringify(copy)}@${base}@${stat}@${bgRang}`;
 
          // Создаем Blob (файл в памяти)
          const blob = new Blob([content], { type: "text/plain" });
@@ -1857,7 +1857,7 @@ fileInput.addEventListener('change', function () {
          set('bgRang', parts[3])
 
          console.log(`BGRANG: ${parts[3]}`);
-         
+
 
          location.reload(true);
 
