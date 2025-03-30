@@ -15,18 +15,9 @@ function get(name) {
 function clear() {
    localStorage.clear()
 }
-function video(mode) {
+import { videos } from './videos.js';
 
-   const videos = {
-      task: 32,
-      absolute: 2,
-      win: 5,
-      lose: 5,
-      upgrade: 1,
-      comeback: 6,
-      recordWin: 9,
-      recordLose: 3,
-   };
+function video(mode) {
 
    function random(mode) {
       let src = 0;
@@ -1064,6 +1055,7 @@ document.addEventListener("click", (event) => {
       const base = get('base');
       const stat = get('stat');
       const bgRang = get('bgRang');
+      const taskBody = get('taskBody');
 
       let today = new Date();
       let day = today.getDate(); // день
@@ -1075,7 +1067,7 @@ document.addEventListener("click", (event) => {
       event.target.style.backgroundColor = '#112A21';
 
       const copy = barData;
-      const content = `${JSON.stringify(copy)}@${base}@${stat}@${bgRang}`;
+      const content = `${JSON.stringify(copy)}@${base}@${stat}@${bgRang}@${taskBody}`;
       navigator.clipboard.writeText(content);
 
 
@@ -1585,8 +1577,8 @@ function timePassed(dateString) {
 }
 
 
-if (get('task-body')) {
-   document.querySelector('[data-task-body]').innerHTML = get('task-body')
+if (get('taskBody')) {
+   document.querySelector('[data-task-body]').innerHTML = get('taskBody')
 
 }
 
@@ -1629,7 +1621,7 @@ document.addEventListener("click", (event) => {
       }
 
 
-      set("task-body", document.querySelector('[data-task-body]').innerHTML)
+      set("taskBody", document.querySelector('[data-task-body]').innerHTML)
 
    }
 
@@ -1673,13 +1665,14 @@ document.addEventListener("click", (event) => {
 
 
       set("startDate", showDateTime())
-      set("task-body", document.querySelector('[data-task-body]').innerHTML)
+      set("taskBody", document.querySelector('[data-task-body]').innerHTML)
 
       function download() {
 
          const base = get('base');
          const stat = get('stat');
          const bgRang = get('bgRang');
+         const taskBody = get('taskBody');
 
          let today = new Date();
          let day = today.getDate(); // день
@@ -1691,7 +1684,7 @@ document.addEventListener("click", (event) => {
          event.target.style.backgroundColor = '#112A21';
 
          const copy = barData;
-         const content = `${JSON.stringify(copy)}@${base}@${stat}@${bgRang}`;
+         const content = `${JSON.stringify(copy)}@${base}@${stat}@${bgRang}@${taskBody}`;
 
          // Создаем Blob (файл в памяти)
          const blob = new Blob([content], { type: "text/plain" });
@@ -1741,7 +1734,7 @@ document.addEventListener("click", (event) => {
             elem.classList.remove('_delete')
          })
 
-         set("task-body", document.querySelector('[data-task-body]').innerHTML)
+         set("taskBody", document.querySelector('[data-task-body]').innerHTML)
 
 
       }
@@ -1761,7 +1754,7 @@ document.addEventListener("click", (event) => {
          if (newText !== '' && newText) {
             targText.innerText = newText
 
-            set("task-body", document.querySelector('[data-task-body]').innerHTML)
+            set("taskBody", document.querySelector('[data-task-body]').innerHTML)
 
 
          }
@@ -1773,7 +1766,7 @@ document.addEventListener("click", (event) => {
             elem.classList.remove('_rename')
          })
 
-         set("task-body", document.querySelector('[data-task-body]').innerHTML)
+         set("taskBody", document.querySelector('[data-task-body]').innerHTML)
 
 
       }
@@ -1801,7 +1794,7 @@ document.addEventListener("click", (event) => {
          </div>
             `)
 
-         set("task-body", document.querySelector('[data-task-body]').innerHTML)
+         set("taskBody", document.querySelector('[data-task-body]').innerHTML)
 
       }
    }
@@ -1855,6 +1848,7 @@ fileInput.addEventListener('change', function () {
          set('base', parts[1])
          set('stat', parts[2])
          set('bgRang', parts[3])
+         set('taskBody', parts[4])
 
          console.log(`BGRANG: ${parts[3]}`);
 

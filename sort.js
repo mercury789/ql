@@ -1,55 +1,67 @@
-const fs = require('fs');
+const fs = require('fs').promises;
 const path = require('path');
 
 async function sort(mode) {
    const folderPath = `./video/${mode}`;
 
    try {
-      const files = await fs.promises.readdir(folderPath);
+      const files = await fs.readdir(folderPath);
       const mp4Files = files.filter(file => file.endsWith('.mp4'));
-      
-      mp4Files.sort(); // просто сортируем лексикографически (по алфавиту)
-      
+
+      mp4Files.sort((a, b) => {
+         const numA = parseInt(a.match(/\d+/)?.[0] || 0);
+         const numB = parseInt(b.match(/\d+/)?.[0] || 0);
+         return numA - numB || a.localeCompare(b);
+      });
+
       for (let index = 0; index < mp4Files.length; index++) {
          const file = mp4Files[index];
          const oldPath = path.join(folderPath, file);
-         const newPath = path.join(folderPath, `${index + 1}.mp4`);
+         const tempPath = path.join(folderPath, `temp_${index + 1}.mp4`);
+         await fs.rename(oldPath, tempPath);
+         console.log(`${file} -> temp_${index + 1}.mp4`);
+      }
 
-         if (oldPath !== newPath) {
-            try {
-               await fs.promises.rename(oldPath, newPath);
-               console.log(`${file} -> ${index + 1}.mp4`);
-            } catch (err) {
-               console.error(`Ошибка переименования ${file}:`, err);
-            }
+      for (let index = 0; index < mp4Files.length; index++) {
+         const tempPath = path.join(folderPath, `temp_${index + 1}.mp4`);
+         const newPath = path.join(folderPath, `${index + 1}.mp4`);
+         const stats = await fs.stat(tempPath);
+         if (stats.isFile()) {
+            await fs.rename(tempPath, newPath);
+            console.log(`temp_${index + 1}.mp4 -> ${index + 1}.mp4`);
          }
       }
+      return mp4Files.length; // Возвращаем количество файлов
    } catch (err) {
       console.error(`Ошибка обработки папки ${mode}:`, err);
-   }
-}
-
-async function count(mode) {
-   const folderPath = `./video/${mode}`;
-
-   try {
-      const updatedFiles = await fs.promises.readdir(folderPath);
-      console.log(`${mode}: ${updatedFiles.length},`);
-   } catch (err) {
-      console.error('ошибка:', err.message);
+      throw err;
    }
 }
 
 async function processAllModes() {
    const modes = ['task', 'absolute', 'win', 'lose', 'upgrade', 'comeback', 'recordWin', 'recordLose'];
+   const videoCounts = {};
 
-   for (const mode of modes) {
-      await sort(mode); // ждем пока сортировка завершится
-   }
+   try {
+      for (const mode of modes) {
+         const count = await sort(mode);
+         videoCounts[mode] = count;
+      }
+      console.log('Сортировка завершена.');
 
-   for (const mode of modes) {
-      await count(mode); // теперь считаем файлы
+      // Формируем содержимое файла
+      const fileContent = `export const videos = {\n${Object.entries(videoCounts)
+         .map(([key, value]) => `   ${key}: ${value}`)
+         .join(',\n')},\n};`;
+
+      // Записываем в файл videos.js
+      await fs.writeFile('videos.js', fileContent);
+      console.log('Файл videos.js успешно обновлен:');
+      console.log(fileContent);
+
+   } catch (err) {
+      console.error('Процесс прерван из-за ошибки:', err);
    }
 }
 
-processAllModes();
+processAllModes().catch(err => console.error('Критическая ошибка:', err));
