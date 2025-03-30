@@ -1721,6 +1721,14 @@ document.addEventListener("click", (event) => {
       })
    }
 
+   if (targ.closest("[data-create]")) {
+      const elems = document.querySelectorAll("[data-shell]")
+
+      elems.forEach((elem) => {
+         elem.classList.add('_create')
+      })
+   }
+
    if (targ.closest("[data-shell]")) {
 
       const shell = targ.closest("[data-shell]")
@@ -1736,7 +1744,6 @@ document.addEventListener("click", (event) => {
 
          set("taskBody", document.querySelector('[data-task-body]').innerHTML)
 
-
       }
 
    }
@@ -1746,16 +1753,14 @@ document.addEventListener("click", (event) => {
 
       if (shell.classList.contains('_rename')) {
 
-
          const targShell = targ.closest("[data-shell]")
          const targText = targShell.querySelector("[data-text]")
 
-         const newText = prompt('Имя')
+         const newText = prompt('Имя', targText.innerText)
          if (newText !== '' && newText) {
             targText.innerText = newText
 
             set("taskBody", document.querySelector('[data-task-body]').innerHTML)
-
 
          }
 
@@ -1768,53 +1773,65 @@ document.addEventListener("click", (event) => {
 
          set("taskBody", document.querySelector('[data-task-body]').innerHTML)
 
-
       }
 
    }
 
-   if (targ.closest("[data-date]")) {
-      const newText = prompt('Имя')
-      if (newText !== '' && newText) {
+   if (targ.closest("[data-shell]")) {
 
-         const targShell = targ.closest("[data-shell]")
+      const shell = targ.closest("[data-shell]")
 
-         targShell.insertAdjacentHTML('afterend', `
-                 <div data-shell>
-         <div data-mark>
-            <div data-task-decor style="width: 0%; transition: width 0.3s ease 0s;"></div>
-            <div data-text>${newText}</div>
-            <div data-info>
-               <div data-num>0</div>
-               <div>/</div>
-               <div data-max>1</div>
+      if (shell.classList.contains('_create')) {
+
+         const newText = prompt('Имя')
+         if (newText !== '' && newText) {
+
+            const targShell = targ.closest("[data-shell]")
+
+            targShell.insertAdjacentHTML('afterend', `
+                    <div data-shell>
+            <div data-mark>
+               <div data-task-decor style="width: 0%; transition: width 0.3s ease 0s;"></div>
+               <div data-text>${newText}</div>
+               <div data-info>
+                  <div data-num>0</div>
+                  <div>/</div>
+                  <div data-max>1</div>
+               </div>
             </div>
-         </div>
-         <div data-date>0.00</div>
-         </div>
-            `)
+            <div data-date>0.00</div>
+            </div>
+               `)
 
-         set("taskBody", document.querySelector('[data-task-body]').innerHTML)
+            set("taskBody", document.querySelector('[data-task-body]').innerHTML)
+
+         }
 
       }
+
    }
 
    if (targ.closest("[data-stat]")) {
       const burger = document.querySelector('[data-burger]')
+      const shadow = document.querySelector('[data-shadow]')
 
       if (burger.classList.contains('_active')) {
          burger.classList.remove('_active')
+         shadow.classList.remove('_active')
 
       } else {
          burger.classList.add('_active')
+         shadow.classList.add('_active')
 
       }
 
    }
 
-   if (!targ.closest("[data-burger]") && !targ.closest("[data-stat]")) {
+   if (targ.closest("[data-shadow]")) {
       const burger = document.querySelector('[data-burger]')
+      const shadow = document.querySelector('[data-shadow]')
       burger.classList.remove('_active')
+      shadow.classList.remove('_active')
 
    }
 
