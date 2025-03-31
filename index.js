@@ -84,6 +84,10 @@ var ctx = document.getElementById('chart').getContext('2d');
 ctx.canvas.width = 1000;
 ctx.canvas.height = 700;
 
+var ctx2 = document.getElementById('chart2').getContext('2d');
+ctx2.canvas.width = 1000;
+ctx2.canvas.height = 700;
+
 
 if (get('barData') && JSON.parse(get('barData')).length !== 0) {
 
@@ -142,11 +146,13 @@ if (get('barData') && JSON.parse(get('barData')).length !== 0) {
 } else {
 
    var barData = [];
+   var barData2 = [];
 
 }
 
 
 var lineData = barData.map(data => ({ x: data.x, y: data.c }));
+var lineData2 = barData.map(data => ({ x: data.x, y: data.c }));
 
 var chart = new Chart(ctx, {
    type: 'candlestick',
@@ -170,62 +176,52 @@ var chart = new Chart(ctx, {
       ]
    }
 });
+var chart2 = new Chart(ctx2, {
+   type: 'candlestick',
+   data: {
+      datasets: [
 
-var update = function () {
-   var dataset = chart.config.data.datasets[0];
+         {
+            label: '',
+            data: barData2,
+            borderColor: '#100F14',
 
-   // candlestick vs ohlc
-   var type = document.getElementById('type').value;
-   chart.config.type = type;
+         },
 
-   // linear vs lo.g
-   /*
-   var scaleType = document.getElementById('scale-type').value;
-   chart.config.options.scales.y.type = scaleType;
-   */
+         {
+            label: '',
+            type: 'line',
+            data: lineData2,
+            hidden: true,
+         }
 
-   // color
-
-   var colorScheme = document.getElementById('color-scheme').value;
-   if (colorScheme === 'neon') {
-      chart.config.data.datasets[0].backgroundColors = {
-         up: '#20B16B',
-         down: '#EE4448',
-         unchanged: '#999',
-
-      };
-   } else {
-      delete chart.config.data.datasets[0].backgroundColors;
+      ]
    }
+});
+
+// var update = function () {
+//    var dataset = chart.config.data.datasets[0];
+
+//    var type = document.getElementById('type').value;
+//    chart.config.type = type;
+
+//    var colorScheme = document.getElementById('color-scheme').value;
+//    if (colorScheme === 'neon') {
+//       chart.config.data.datasets[0].backgroundColors = {
+//          up: '#20B16B',
+//          down: '#EE4448',
+//          unchanged: '#999',
+
+//       };
+//    } else {
+//       delete chart.config.data.datasets[0].backgroundColors;
+//    }
 
 
-   // border
-   /*
-   var border = document.getElementById('border').value;
-   if (border === 'false') {
-     dataset.borderColors = 'rgba(0, 0, 0, 0)';
-   } else {
-     delete dataset.borderColors;
-   }
-   */
+//    chart.update();
+// };
 
-   // mixed charts
-   /*
-   var mixed = document.getElementById('mixed').value;
-   if (mixed === 'true') {
-     chart.config.data.datasets[1].hidden = false;
-   } else {
-     chart.config.data.datasets[1].hidden = true;
-   }
-   */
-
-   chart.update();
-};
-
-[...document.getElementsByTagName('select')].forEach(element => element.addEventListener('change', update));
-/*
-document.getElementById('update').addEventListener('click', update);
-*/
+// [...document.getElementsByTagName('select')].forEach(element => element.addEventListener('change', update));
 
 
 if (get('base')) {
@@ -273,9 +269,7 @@ if (get('base')) {
   
   `
 
-
 }
-
 
 document.addEventListener("click", (event) => {
 
@@ -290,36 +284,45 @@ document.addEventListener("click", (event) => {
          document.querySelector('[data-task-main]').classList.add('_active')
       }
 
-
    }
 
-
    if (event.target.closest("[data-fix]")) {
-
+      const chart = document.querySelector('[data-chart]')
+      const chart2 = document.querySelector('[data-chart-2]')
+      const body = document.querySelector('[data-body]')
+      const task = document.querySelector('[data-task-main]')
+      const mode = document.querySelector('[data-mode]')
+      
 
       if (event.target.classList.contains('_active')) {
          event.target.classList.remove('_active')
-         document.querySelector('body').style.overflow = 'auto'
+
+         chart2.classList.remove('_active')
+         chart.classList.add('_active')
+
+         body.classList.remove('_hidden')
+         task.classList.remove('_hidden')
+         mode.classList.remove('_hidden')
       } else {
          event.target.classList.add('_active')
-         document.querySelector('body').style.overflow = 'hidden'
 
+         chart2.classList.add('_active')
+         chart.classList.remove('_active')
 
+         body.classList.add('_hidden')
+         task.classList.add('_hidden')
+         mode.classList.add('_hidden')
       }
 
    }
 
-
    if (event.target.closest("[data-pos-add]")) {
-
 
       document.querySelector('[data-pos-add]').style.display = 'none'
       document.querySelector('[data-neg-add]').style.display = 'none'
       document.querySelector('[data-mode]').style.display = 'none'
 
-
       let input = document.createElement('input')
-
       let inputSecond = document.createElement('input')
 
       input.type = 'text'

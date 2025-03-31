@@ -144,6 +144,9 @@ button, select, input {
   position: fixed;
   z-index: 50;
 }
+[data-mode]._hidden {
+   display: none;
+}
 
 [data-pos-point], [data-neg-point] {
   position: relative;
@@ -302,7 +305,7 @@ video img {
   z-index: 10;
 }
 [data-fix]._active {
-  background-color: transparent;
+   border: 1px solid yellow;
 }
 
 
@@ -314,12 +317,18 @@ video img {
 [data-body]._active {
    display: block;
 }
+[data-body]._hidden {
+   display: none;
+}
 [data-task-main] {
    overflow-y: auto; 
    height: 386px;
 }
 [data-task-main]._active {
-   display: none
+   display: none;
+}
+[data-task-main]._hidden {
+   display: none;
 }
 
 [data-mark] {
@@ -336,7 +345,7 @@ video img {
 
 [data-shell] {
    display: flex;
-   align-items: center
+   align-items: center;
 }
 
 [data-task-decor] {
@@ -536,5 +545,41 @@ video {
 }
 [data-dropdown] button:not(:last-child) {
    border-bottom: 1px solid #3C3C3C;
-   
+}
+
+
+
+[data-chart] {
+   display: none;
+
+   border: 1px solid red;
+}
+[data-chart-2] {
+   display: none;
+
+   border: 1px solid yellow;
+
+}
+
+
+[data-chart]._active {
+   display: block;
+}
+[data-chart-2]._active {
+   display: block;
+}
+
+
+
+[data-money] {
+}
+[data-money-shell] {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+
+   width: 60%;
+
+   padding-top: 2.5px;
+   padding-bottom: 2.5px;
 }
