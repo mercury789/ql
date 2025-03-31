@@ -1667,41 +1667,6 @@ document.addEventListener("click", (event) => {
       set("startDate", showDateTime())
       set("taskBody", document.querySelector('[data-task-body]').innerHTML)
 
-      function download() {
-
-         const base = get('base');
-         const stat = get('stat');
-         const bgRang = get('bgRang');
-         const taskBody = get('taskBody');
-
-         let today = new Date();
-         let day = today.getDate(); // день
-         let month = today.getMonth() + 1; // месяц (нумерация с 0)
-         let year = today.getFullYear(); // год
-
-         const date = `${day}.${month}.${year}`;
-
-         event.target.style.backgroundColor = '#112A21';
-
-         const copy = barData;
-         const content = `${JSON.stringify(copy)}@${base}@${stat}@${bgRang}@${taskBody}`;
-
-         // Создаем Blob (файл в памяти)
-         const blob = new Blob([content], { type: "text/plain" });
-
-         // Создаем ссылку на Blob и эмулируем клик по ней для скачивания файла
-         const a = document.createElement("a");
-         a.href = URL.createObjectURL(blob);
-         a.download = `save_${date}.txt`; // Имя файла
-         document.body.appendChild(a);
-         a.click();
-         document.body.removeChild(a);
-
-         // Освобождаем память
-         URL.revokeObjectURL(a.href);
-
-      }
-      download()
 
    }
 
