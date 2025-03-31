@@ -1759,10 +1759,12 @@ document.addEventListener("click", (event) => {
          const targDecor = targShell.querySelector("[data-task-decor]")
          const targNum = targShell.querySelector("[data-num]")
          const targInfo = targShell.querySelector("[data-info]")
+         const targDate = targShell.querySelector("[data-date]")
 
          targDecor.style = 'width: 0%; transition: width 0.3s ease 0s;'
          targInfo.style = 'color: white;'
          targNum.innerText = 0
+         targDate.innerText = '0.00'
 
          const elems = document.querySelectorAll("[data-shell]")
 
