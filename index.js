@@ -1758,8 +1758,10 @@ document.addEventListener("click", (event) => {
          const targShell = targ.closest("[data-shell]")
          const targDecor = targShell.querySelector("[data-task-decor]")
          const targNum = targShell.querySelector("[data-num]")
+         const targInfo = targShell.querySelector("[data-info]")
 
          targDecor.style = 'width: 0%; transition: width 0.3s ease 0s;'
+         targInfo.style = 'color: white;'
          targNum.innerText = 0
 
          const elems = document.querySelectorAll("[data-shell]")
