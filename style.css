@@ -131,7 +131,7 @@ button, select, input {
   color: rgb(255, 99, 132);
 }
 
-[data-pos-add], [data-neg-add], [data-fix], [data-mode] {
+[data-pos-add], [data-neg-add], [data-fix], [data-mode], [data-money-pos-add], [data-money-neg-add] {
   width: 30px;
   height: 30px;
   border-radius: 10px;
@@ -143,6 +143,9 @@ button, select, input {
   
   position: fixed;
   z-index: 50;
+}
+[data-money-pos-add]._hidden, [data-money-neg-add]._hidden, [data-pos-add]._hidden, [data-neg-add]._hidden {
+   display: none;
 }
 [data-mode]._hidden {
    display: none;
@@ -582,4 +585,13 @@ video {
 
    padding-top: 2.5px;
    padding-bottom: 2.5px;
+}
+
+
+
+[data-money-profit] {
+   color: yellow;
+}
+[data-money-lose] {
+   color: red;
 }

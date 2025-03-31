@@ -292,7 +292,7 @@ document.addEventListener("click", (event) => {
       const body = document.querySelector('[data-body]')
       const task = document.querySelector('[data-task-main]')
       const mode = document.querySelector('[data-mode]')
-      
+
 
       if (event.target.classList.contains('_active')) {
          event.target.classList.remove('_active')
@@ -315,6 +315,132 @@ document.addEventListener("click", (event) => {
       }
 
    }
+
+   if (event.target.closest("[data-money-pos-add]")) {
+
+      document.querySelector('[data-money-pos-add]').style.display = 'none'
+      document.querySelector('[data-money-neg-add]').style.display = 'none'
+
+      let input = document.createElement('input')
+      let inputSecond = document.createElement('input')
+
+      input.type = 'text'
+      input.style = 'position: fixed; bottom: 10px; left: 10px; width: 100px; color: #FCFCFC;'
+      input.setAttribute("tabindex", "-1")
+
+
+      inputSecond.type = 'number'
+      inputSecond.style = 'position: fixed; bottom: 10px; left: 135px; width: 40px; color: rgb(75, 192, 192);'
+      inputSecond.setAttribute("tabindex", "-1")
+
+
+      document.body.appendChild(input)
+      document.body.appendChild(inputSecond)
+
+
+      input.focus()
+
+      function mainText() {
+
+         if (input.value && inputSecond.value || inputSecond.value === 0) {
+
+
+            document.querySelector('[data-money]').insertAdjacentHTML('beforeend', `
+            <div data-money-shell>
+            <div data-money-text>${input.value}</div>
+            <div data-money-num data-money-profit>${inputSecond.value}</div>
+            </div>
+            `)
+
+
+         }
+
+      }
+
+      function mainNum() {
+
+         let num = Number(inputSecond.value)
+
+
+         if ((num || num === 0) && input.value) {
+
+            if (!document.querySelector('[data-money-start]')) {
+
+            }
+         }
+
+      }
+
+      let blurStatus = true
+      let blurStatusSecond = true
+
+
+      input.addEventListener('keydown', (event) => {
+
+
+         if (event.key === 'Enter') {
+            event.preventDefault()
+
+            blurStatus = false
+
+            inputSecond.focus()
+
+         }
+
+      })
+
+
+      inputSecond.addEventListener('keydown', (event) => {
+
+         if (event.key === 'Enter') {
+            event.preventDefault()
+
+            blurStatusSecond = false
+
+            mainText()
+            mainNum()
+            input.remove()
+            inputSecond.remove()
+
+            document.querySelector('[data-money-pos-add]').style.display = 'flex'
+            document.querySelector('[data-money-neg-add]').style.display = 'flex'
+
+         }
+
+      })
+
+
+      input.addEventListener('blur', (event) => {
+
+         if (blurStatus) {
+
+            input.remove()
+            inputSecond.remove()
+
+            document.querySelector('[data-money-pos-add]').style.display = 'flex'
+            document.querySelector('[data-money-neg-add]').style.display = 'flex'
+
+         }
+
+      })
+
+
+      inputSecond.addEventListener('blur', (event) => {
+
+         if (blurStatusSecond) {
+
+            input.remove()
+            inputSecond.remove()
+
+            document.querySelector('[data-money-pos-add]').style.display = 'flex'
+            document.querySelector('[data-money-neg-add]').style.display = 'flex'
+
+         }
+
+
+      })
+   }
+
 
    if (event.target.closest("[data-pos-add]")) {
 
@@ -373,14 +499,6 @@ document.addEventListener("click", (event) => {
             </div>
             `)
 
-            /*
-            const base = document.querySelector('[data-body]').innerHTML
-            
-            set('base', base) 
-            
-            const stat = document.querySelector('[data-stat]').innerHTML
-            set('stat', stat) 
-            */
 
          }
 
@@ -995,6 +1113,14 @@ document.addEventListener("click", (event) => {
 
    }
 
+   if (event.target.closest("[data-money-clear]")) {
+
+      rem('money')
+      rem('barData2')
+      event.target.style.backgroundColor = '#33181B'
+
+   }
+
    if (event.target.closest("[data-start]")) {
 
       event.target.remove()
@@ -1050,6 +1176,31 @@ document.addEventListener("click", (event) => {
 
       const stat = document.querySelector('[data-stat]').innerHTML
       set('stat', stat)
+
+   }
+   if (event.target.closest("[data-money-start]")) {
+
+      event.target.remove()
+
+      let profitSum = Number(document.querySelector('[data-money-profit]').innerText)
+
+      let today = new Date();
+      let day = today.getDate(); // день
+      let month = today.getMonth() + 1; // месяц (нумерация с 0)
+      let year = today.getFullYear(); // год
+
+      const date = `${day}${month}${year}`;
+
+
+      barData2.push({ x: Date.now() - 86400000, o: profitSum, h: profitSum, l: profitSum, c: profitSum, date: '' })
+
+      barData2.push({ x: Date.now(), o: profitSum, h: profitSum, l: profitSum, c: profitSum, date: date })
+
+      set('barData2', JSON.stringify(barData2))
+      chart2.update()
+
+      const money = document.querySelector('[data-money]').innerHTML
+      set('money', money)
 
    }
 
@@ -1707,7 +1858,7 @@ document.addEventListener("click", (event) => {
          if (isDropdownOutOfView(dropdown)) {
             dropdown.style.top = 'auto';
             dropdown.style.bottom = '100%';
-          }
+         }
 
       }
 
