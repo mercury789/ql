@@ -419,6 +419,12 @@ video {
 [data-shell]._rename [data-text] {
    color: rgb(255, 162, 0);
 }
+[data-shell]._delete [data-text] {
+   color: rgb(255, 162, 0);
+}
+[data-shell]._cancel [data-text] {
+   color: rgb(255, 162, 0);
+}
 
 
 [data-edit] {

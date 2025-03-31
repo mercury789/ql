@@ -1587,7 +1587,7 @@ document.addEventListener("click", (event) => {
 
    const targ = event.target
 
-   if (targ.closest("[data-mark]") && !targ.closest("[data-shell]").classList.contains('_rename') && !targ.closest("[data-shell]").classList.contains('_delete') && !targ.closest("[data-shell]").classList.contains('_create')) {
+   if (targ.closest("[data-mark]") && !targ.closest("[data-shell]").classList.contains('_rename') && !targ.closest("[data-shell]").classList.contains('_delete') && !targ.closest("[data-shell]").classList.contains('_create') && !targ.closest("[data-shell]").classList.contains('_cancel')) {
 
       const targShell = targ.closest("[data-mark]").closest("[data-shell]")
       const targNum = targShell.querySelector('[data-num]')
@@ -1694,6 +1694,14 @@ document.addEventListener("click", (event) => {
       })
    }
 
+   if (targ.closest("[data-cancel]")) {
+      const elems = document.querySelectorAll("[data-shell]")
+
+      elems.forEach((elem) => {
+         elem.classList.add('_cancel')
+      })
+   }
+
    if (targ.closest("[data-shell]")) {
 
       const shell = targ.closest("[data-shell]")
@@ -1734,6 +1742,30 @@ document.addEventListener("click", (event) => {
 
          elems.forEach((elem) => {
             elem.classList.remove('_rename')
+         })
+
+         set("taskBody", document.querySelector('[data-task-body]').innerHTML)
+
+      }
+
+   }
+   if (targ.closest("[data-shell]")) {
+
+      const shell = targ.closest("[data-shell]")
+
+      if (shell.classList.contains('_cancel')) {
+
+         const targShell = targ.closest("[data-shell]")
+         const targDecor = targShell.querySelector("[data-task-decor]")
+         const targNum = targShell.querySelector("[data-num]")
+
+         targDecor.style = 'width: 0%; transition: width 0.3s ease 0s;'
+         targNum.innerText = 0
+
+         const elems = document.querySelectorAll("[data-shell]")
+
+         elems.forEach((elem) => {
+            elem.classList.remove('_cancel')
          })
 
          set("taskBody", document.querySelector('[data-task-body]').innerHTML)
