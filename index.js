@@ -1587,13 +1587,12 @@ document.addEventListener("click", (event) => {
 
    const targ = event.target
 
-   if (targ.closest("[data-mark]") && !targ.closest("[data-shell]").classList.contains('_rename') && !targ.closest("[data-shell]").classList.contains('_delete') && !targ.closest("[data-shell]").classList.contains('_create') && !targ.closest("[data-shell]").classList.contains('_cancel')) {
+   if (targ.closest("[data-mark]")) {
 
       const targShell = targ.closest("[data-mark]").closest("[data-shell]")
       const targNum = targShell.querySelector('[data-num]')
       const targMax = targShell.querySelector('[data-max]')
       const targDate = targShell.querySelector('[data-date]')
-
 
       const num = targNum.innerText
       const newNum = Number(num) + 1
@@ -1670,153 +1669,137 @@ document.addEventListener("click", (event) => {
 
    }
 
-   if (targ.closest("[data-delete]")) {
-      const elems = document.querySelectorAll("[data-shell]")
+   function isDropdownOutOfView(dropdownElement) {
+      // Получаем позицию и размеры дропдауна
+      const dropdownRect = dropdownElement.getBoundingClientRect();
 
-      elems.forEach((elem) => {
-         elem.classList.add('_delete')
-      })
+      // Проверяем, выходит ли нижняя часть дропдауна за нижнюю границу окна
+      const isOutOfViewBottom = dropdownRect.bottom > window.innerHeight;
+
+      return isOutOfViewBottom;
    }
 
-   if (targ.closest("[data-rename]")) {
-      const elems = document.querySelectorAll("[data-shell]")
+   if (targ.closest("[data-date]")) {
+      const targShell = targ.closest("[data-shell]")
+      const targDate = targShell.querySelector("[data-date]")
+      const targtext = targShell.querySelector("[data-text]")
+      const taskShadow = document.querySelector('[data-task-shadow]')
 
-      elems.forEach((elem) => {
-         elem.classList.add('_rename')
-      })
+      if (!document.querySelector('[data-dropdown]')) {
+         targtext.classList.add('_active')
+         taskShadow.classList.add('_active')
+         targDate.insertAdjacentHTML('beforeend', `
+            
+         <div data-dropdown>
+         <button data-create>создать</button>
+         <button data-rename>переименовать</button>
+         <button data-cancel>отменить</button>
+         <button data-delete>удалить</button>
+         </div>
+   
+   
+            `)
+
+         const dropdown = document.querySelector('[data-dropdown]')
+         if (isDropdownOutOfView(dropdown)) {
+            dropdown.style.top = 'auto';
+            dropdown.style.bottom = '100%';
+          }
+
+      }
+
+   }
+
+
+   if (targ.closest("[data-delete]")) {
+
+      const targShell = targ.closest("[data-shell]")
+      const taskShadow = document.querySelector("[data-task-shadow]")
+
+      targShell.remove()
+      taskShadow.classList.remove('_active')
+
+      set("taskBody", document.querySelector('[data-task-body]').innerHTML)
+
+
+   }
+   if (targ.closest("[data-rename]")) {
+
+      const targShell = targ.closest("[data-shell]")
+      const targText = targShell.querySelector("[data-text]")
+      const targDropdown = targShell.querySelector("[data-dropdown]")
+      const taskShadow = document.querySelector("[data-task-shadow]")
+
+      const newText = prompt('Имя', targText.innerText)
+      if (newText !== '' && newText) {
+         targText.innerText = newText
+
+      }
+
+      targText.classList.remove('_active')
+      targDropdown.remove()
+      taskShadow.classList.remove('_active')
+
+      set("taskBody", document.querySelector('[data-task-body]').innerHTML)
+
+   }
+
+
+   if (targ.closest("[data-cancel]")) {
+
+      const targShell = targ.closest("[data-shell]")
+      const targText = targShell.querySelector("[data-text]")
+      const targDropdown = targShell.querySelector("[data-dropdown]")
+      const taskShadow = document.querySelector("[data-task-shadow]")
+
+      const targDecor = targShell.querySelector("[data-task-decor]")
+      const targNum = targShell.querySelector("[data-num]")
+      const targInfo = targShell.querySelector("[data-info]")
+      const targDate = targShell.querySelector("[data-date]")
+
+      targDecor.style = 'width: 0%; transition: width 0.3s ease 0s;'
+      targInfo.style = 'color: white;'
+      targNum.innerText = 0
+      targDate.innerText = '0.00'
+
+      targText.classList.remove('_active')
+      targDropdown.remove()
+      taskShadow.classList.remove('_active')
+
+      set("taskBody", document.querySelector('[data-task-body]').innerHTML)
+
    }
 
    if (targ.closest("[data-create]")) {
-      const elems = document.querySelectorAll("[data-shell]")
 
-      elems.forEach((elem) => {
-         elem.classList.add('_create')
-      })
-   }
+      const targShell = targ.closest("[data-shell]")
+      const targText = targShell.querySelector("[data-text]")
+      const targDropdown = targShell.querySelector("[data-dropdown]")
+      const taskShadow = document.querySelector("[data-task-shadow]")
 
-   if (targ.closest("[data-cancel]")) {
-      const elems = document.querySelectorAll("[data-shell]")
-
-      elems.forEach((elem) => {
-         elem.classList.add('_cancel')
-      })
-   }
-
-   if (targ.closest("[data-shell]")) {
-
-      const shell = targ.closest("[data-shell]")
-
-      if (shell.classList.contains('_delete')) {
-         shell.remove()
-
-         const elems = document.querySelectorAll("[data-shell]")
-
-         elems.forEach((elem) => {
-            elem.classList.remove('_delete')
-         })
-
-         set("taskBody", document.querySelector('[data-task-body]').innerHTML)
+      const newText = prompt('Имя')
+      if (newText !== '' && newText) {
+         targShell.insertAdjacentHTML('afterend', `
+         <div data-shell>
+         <div data-mark>
+         <div data-task-decor style="width: 0%; transition: width 0.3s ease 0s;"></div>
+         <div data-text>${newText}</div>
+         <div data-info>
+         <div data-num>0</div>
+         <div>/</div>
+         <div data-max>1</div>
+         </div>
+         </div>
+         <div data-date>0.00</div>
+         </div>
+       `)
 
       }
 
-   }
-   if (targ.closest("[data-shell]")) {
-
-      const shell = targ.closest("[data-shell]")
-
-      if (shell.classList.contains('_rename')) {
-
-         const targShell = targ.closest("[data-shell]")
-         const targText = targShell.querySelector("[data-text]")
-
-         const newText = prompt('Имя', targText.innerText)
-         if (newText !== '' && newText) {
-            targText.innerText = newText
-
-            set("taskBody", document.querySelector('[data-task-body]').innerHTML)
-
-         }
-
-
-         const elems = document.querySelectorAll("[data-shell]")
-
-         elems.forEach((elem) => {
-            elem.classList.remove('_rename')
-         })
-
-         set("taskBody", document.querySelector('[data-task-body]').innerHTML)
-
-      }
-
-   }
-   if (targ.closest("[data-shell]")) {
-
-      const shell = targ.closest("[data-shell]")
-
-      if (shell.classList.contains('_cancel')) {
-
-         const targShell = targ.closest("[data-shell]")
-         const targDecor = targShell.querySelector("[data-task-decor]")
-         const targNum = targShell.querySelector("[data-num]")
-         const targInfo = targShell.querySelector("[data-info]")
-         const targDate = targShell.querySelector("[data-date]")
-
-         targDecor.style = 'width: 0%; transition: width 0.3s ease 0s;'
-         targInfo.style = 'color: white;'
-         targNum.innerText = 0
-         targDate.innerText = '0.00'
-
-         const elems = document.querySelectorAll("[data-shell]")
-
-         elems.forEach((elem) => {
-            elem.classList.remove('_cancel')
-         })
-
-         set("taskBody", document.querySelector('[data-task-body]').innerHTML)
-
-      }
-
-   }
-
-   if (targ.closest("[data-shell]")) {
-
-      const shell = targ.closest("[data-shell]")
-
-      if (shell.classList.contains('_create')) {
-
-         const newText = prompt('Имя')
-         if (newText !== '' && newText) {
-
-            const targShell = targ.closest("[data-shell]")
-
-            targShell.insertAdjacentHTML('afterend', `
-                    <div data-shell>
-            <div data-mark>
-               <div data-task-decor style="width: 0%; transition: width 0.3s ease 0s;"></div>
-               <div data-text>${newText}</div>
-               <div data-info>
-                  <div data-num>0</div>
-                  <div>/</div>
-                  <div data-max>1</div>
-               </div>
-            </div>
-            <div data-date>0.00</div>
-            </div>
-               `)
-
-            set("taskBody", document.querySelector('[data-task-body]').innerHTML)
-
-         }
-
-         const elems = document.querySelectorAll("[data-shell]")
-
-         elems.forEach((elem) => {
-            elem.classList.remove('_create')
-         })
-
-         set("taskBody", document.querySelector('[data-task-body]').innerHTML)
-
-      }
+      targText.classList.remove('_active')
+      taskShadow.classList.remove('_active')
+      targDropdown.remove()
+      set("taskBody", document.querySelector('[data-task-body]').innerHTML)
 
    }
 
@@ -1841,6 +1824,18 @@ document.addEventListener("click", (event) => {
       const shadow = document.querySelector('[data-shadow]')
       burger.classList.remove('_active')
       shadow.classList.remove('_active')
+
+   }
+
+   if (targ.closest("[data-task-shadow]")) {
+      const shadow = targ.closest("[data-task-shadow]")
+      const dropDown = document.querySelector('[data-dropdown]')
+      const text = document.querySelector('[data-text]._active')
+
+
+      shadow.classList.remove('_active')
+      dropDown.remove()
+      text.classList.remove('_active')
 
    }
 
@@ -1877,7 +1872,7 @@ fileInput.addEventListener('change', function () {
          set('taskBody', parts[4])
 
          console.log(`BGRANG: ${parts[3]}`);
-         
+
          location.reload(true);
 
       };
