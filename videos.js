@@ -8,3 +8,6 @@ export const videos = {
    recordWin: 9,
    recordLose: 3,
 };
+
+
+

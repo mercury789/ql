@@ -1587,7 +1587,7 @@ document.addEventListener("click", (event) => {
 
    const targ = event.target
 
-   if (targ.closest("[data-mark]") && !targ.closest("[data-shell]").classList.contains('_rename') && !targ.closest("[data-shell]").classList.contains('_delete')) {
+   if (targ.closest("[data-mark]") && !targ.closest("[data-shell]").classList.contains('_rename') && !targ.closest("[data-shell]").classList.contains('_delete') && !targ.closest("[data-shell]").classList.contains('_create')) {
 
       const targShell = targ.closest("[data-mark]").closest("[data-shell]")
       const targNum = targShell.querySelector('[data-num]')
@@ -1771,6 +1771,14 @@ document.addEventListener("click", (event) => {
             set("taskBody", document.querySelector('[data-task-body]').innerHTML)
 
          }
+
+         const elems = document.querySelectorAll("[data-shell]")
+
+         elems.forEach((elem) => {
+            elem.classList.remove('_create')
+         })
+
+         set("taskBody", document.querySelector('[data-task-body]').innerHTML)
 
       }
 
