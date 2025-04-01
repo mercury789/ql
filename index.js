@@ -2350,9 +2350,6 @@ fileInput.addEventListener('change', function () {
             set('moneyStat', parts[7])
          }
 
-
-
-
          console.log(`BGRANG: ${parts[3]}`);
 
          location.reload(true);
