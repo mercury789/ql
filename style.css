@@ -18,6 +18,9 @@ h2 {
 	font-size: 1.25em;
 }
 
+  /* color: rgba(192, 184, 75, 0.5); */
+
+
 body{
   position: relative;
   
@@ -90,8 +93,24 @@ input {
   font-size: 24px;
   font-weight: 500;
 }
+[data-statmoney-num] {
+  font-size: 24px;
+  font-weight: 500;
+}
 
 [data-profit] {
+  padding-top: 2px;
+  padding-bottom: 2px;
+  padding-left: 4px;
+  padding-right: 4px;
+  
+  
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  background-color: rgba(29, 28, 34, 0.5);
+}
+[data-statmoney-procent] {
   padding-top: 2px;
   padding-bottom: 2px;
   padding-left: 4px;
@@ -144,7 +163,7 @@ button, select, input {
   position: fixed;
   z-index: 50;
 }
-[data-money-pos-add]._hidden, [data-money-neg-add]._hidden, [data-pos-add]._hidden, [data-neg-add]._hidden {
+[data-money-pos-add]._hidden, [data-money-neg-add]._hidden, [data-pos-add]._hidden, [data-neg-add]._hidden, [data-money-neg-add]._block {
    display: none;
 }
 [data-mode]._hidden {
@@ -256,6 +275,7 @@ input {
 
 .icon img {
   width: 100%;
+
 }
 
 
@@ -280,6 +300,9 @@ input {
 
 [data-stat] {
   padding-top: 10px;
+}
+[data-stat]._hidden {
+   display: none;
 }
 
 /* Видео на весь экран */
@@ -585,8 +608,15 @@ video {
 
 
 [data-money-profit] {
-   color: yellow;
+   color: rgb(192, 184, 75);
 }
 [data-money-lose] {
-   color: red;
+   color: rgb(255, 99, 132);
+}
+
+[data-money-stat] {
+   padding-top: 10px;
+}
+[data-money-stat]._hidden {
+   display: none;
 }

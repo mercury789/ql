@@ -137,13 +137,8 @@ if (get('barData') && JSON.parse(get('barData')).length !== 0) {
       }
 
       set('barData', JSON.stringify(barData))
-      const money = document.querySelector('[data-money]').innerHTML
-      set('money', money)
 
    }
-
-
-
 
 } else {
 
@@ -203,12 +198,14 @@ if (get('barData2') && JSON.parse(get('barData2')).length !== 0) {
 
    }
 
-
+   document.querySelector('[data-money]').innerHTML = get('money')
 
 
 } else {
 
    var barData2 = [];
+   document.querySelector('[data-money-neg-add]').classList.add('_block')
+   document.querySelector('[data-money-pos-add]').style = 'bottom: 10px; right: 10px;'
 
 }
 
@@ -227,7 +224,6 @@ var chart = new Chart(ctx, {
             borderColor: '#100F14',
 
          },
-
          {
             label: '',
             type: 'line',
@@ -242,14 +238,22 @@ var chart2 = new Chart(ctx2, {
    type: 'candlestick',
    data: {
       datasets: [
-
          {
             label: '',
             data: barData2,
+
             borderColor: '#100F14',
-
+            backgroundColors: {
+               up: 'rgba(192, 184, 75, 0.5)',
+               down: 'rgba(255, 99, 132, 0.5)',
+               unchanged: 'rgba(201, 203, 207, 0.5)',
+            },
+            borderColors: {
+               up: 'rgb(192, 184, 75)',
+               down: 'rgb(255, 99, 132)',
+               unchanged: 'rgb(201, 203, 207)',
+            }
          },
-
          {
             label: '',
             type: 'line',
@@ -289,6 +293,7 @@ var chart2 = new Chart(ctx2, {
 if (get('base')) {
    document.querySelector('[data-body]').innerHTML = get('base')
    document.querySelector('[data-stat]').innerHTML = get('stat')
+   document.querySelector('[data-money-stat]').innerHTML = get('moneyStat')
 
 
 } else {
@@ -331,6 +336,22 @@ if (get('base')) {
   
   `
 
+   document.querySelector('[data-money-stat]').innerHTML = `
+  
+   <div class="stat-top">
+      <div class="icon"><img data-rang src="icon/0.png"></div>
+      <span> </span>
+      <span class='name'>MN/PRC</span>
+      <span> </span>
+      <span data-statmoney-procent>0.00%</span>
+   </div>
+ 
+   <div><span data-statmoney-num>0.00</span><span> </span></div>
+  
+   <div>⠀</div>
+  
+  `
+
 }
 
 document.addEventListener("click", (event) => {
@@ -354,6 +375,8 @@ document.addEventListener("click", (event) => {
       const body = document.querySelector('[data-body]')
       const task = document.querySelector('[data-task-main]')
       const mode = document.querySelector('[data-mode]')
+      const stat = document.querySelector('[data-stat]')
+      const moneyStat = document.querySelector('[data-money-stat]')
 
 
       if (event.target.classList.contains('_active')) {
@@ -365,6 +388,8 @@ document.addEventListener("click", (event) => {
          body.classList.remove('_hidden')
          task.classList.remove('_hidden')
          mode.classList.remove('_hidden')
+         stat.classList.remove('_hidden')
+         moneyStat.classList.add('_hidden')
       } else {
          event.target.classList.add('_active')
 
@@ -374,6 +399,8 @@ document.addEventListener("click", (event) => {
          body.classList.add('_hidden')
          task.classList.add('_hidden')
          mode.classList.add('_hidden')
+         stat.classList.add('_hidden')
+         moneyStat.classList.remove('_hidden')
       }
 
    }
@@ -445,6 +472,7 @@ document.addEventListener("click", (event) => {
                      checkDate.h = profitClose
                   }
                }
+
             }
 
             chart2.update()
@@ -453,6 +481,39 @@ document.addEventListener("click", (event) => {
             const money = document.querySelector('[data-money]').innerHTML
             set('money', money)
 
+         } else {
+
+            if (num && input.value) {
+
+               if (document.querySelector('[data-money-start]')) {
+
+                  document.querySelector('[data-money-start]').remove()
+
+                  let profitSum = Number(document.querySelector('[data-money-profit]').innerText)
+
+                  let today = new Date();
+                  let day = today.getDate(); // день
+                  let month = today.getMonth() + 1; // месяц (нумерация с 0)
+                  let year = today.getFullYear(); // год
+
+                  const date = `${day}${month}${year}`;
+
+
+                  barData2.push({ x: Date.now() - 86400000, o: profitSum, h: profitSum, l: profitSum, c: profitSum, date: '' })
+
+                  barData2.push({ x: Date.now(), o: profitSum, h: profitSum, l: profitSum, c: profitSum, date: date })
+
+                  document.querySelector('[data-money-neg-add]').classList.remove('_block')
+                  document.querySelector('[data-money-pos-add]').style = 'bottom: 55px; right: 10px;'
+
+                  set('barData2', JSON.stringify(barData2))
+                  chart2.update()
+                  const money = document.querySelector('[data-money]').innerHTML
+                  set('money', money)
+
+               }
+
+            }
          }
 
       }
@@ -695,9 +756,6 @@ document.addEventListener("click", (event) => {
 
 
       input.focus()
-
-
-      let num
 
 
       function mainText() {
@@ -1064,7 +1122,6 @@ document.addEventListener("click", (event) => {
             if (!document.querySelector('[data-start]')) {
 
 
-
                let sum = 0;
                document.querySelectorAll('[data-span]').forEach(div => {
                   let num = parseFloat(div.textContent);
@@ -1393,31 +1450,6 @@ document.addEventListener("click", (event) => {
 
       const stat = document.querySelector('[data-stat]').innerHTML
       set('stat', stat)
-
-   }
-   if (event.target.closest("[data-money-start]")) {
-
-      event.target.remove()
-
-      let profitSum = Number(document.querySelector('[data-money-profit]').innerText)
-
-      let today = new Date();
-      let day = today.getDate(); // день
-      let month = today.getMonth() + 1; // месяц (нумерация с 0)
-      let year = today.getFullYear(); // год
-
-      const date = `${day}${month}${year}`;
-
-
-      barData2.push({ x: Date.now() - 86400000, o: profitSum, h: profitSum, l: profitSum, c: profitSum, date: '' })
-
-      barData2.push({ x: Date.now(), o: profitSum, h: profitSum, l: profitSum, c: profitSum, date: date })
-
-      set('barData2', JSON.stringify(barData2))
-      chart2.update()
-
-      const money = document.querySelector('[data-money]').innerHTML
-      set('money', money)
 
    }
 
