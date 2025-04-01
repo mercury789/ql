@@ -137,6 +137,8 @@ if (get('barData') && JSON.parse(get('barData')).length !== 0) {
       }
 
       set('barData', JSON.stringify(barData))
+      const money = document.querySelector('[data-money]').innerHTML
+      set('money', money)
 
    }
 
@@ -146,6 +148,66 @@ if (get('barData') && JSON.parse(get('barData')).length !== 0) {
 } else {
 
    var barData = [];
+
+}
+
+
+if (get('barData2') && JSON.parse(get('barData2')).length !== 0) {
+
+   document.querySelector('[data-money-start]').remove()
+
+   var barData2 = JSON.parse(get('barData2'))
+
+   let endObj = barData2[barData2.length - 1];
+
+   let oldNum = endObj.c;
+
+   // push + upd + save
+
+   let today = new Date();
+   let day = today.getDate(); // день
+   let month = today.getMonth() + 1; // месяц (нумерация с 0)
+   let year = today.getFullYear(); // год
+
+   const date = `${day}${month}${year}`;
+
+   let miss = Number(date) - Number(endObj.date) - 100000
+   console.log(`${miss} = ${Number(date)} - ${Number(endObj.date)}`);
+   console.log(miss);
+
+
+   if (endObj.date !== date) {
+
+      for (let index = miss; index >= 0; index -= 100000) {
+
+         if (index === 0) {
+            barData2.push({ x: Date.now(), o: oldNum, h: oldNum, l: oldNum, c: oldNum, date: date })
+         } else {
+
+            const newX = Number(barData2[barData2.length - 1].x) + 86400000
+            const newDate = Number(barData2[barData2.length - 1].date) + 100000
+
+            barData2.push({ x: newX, o: oldNum, h: oldNum, l: oldNum, c: oldNum, date: newDate })
+         }
+
+      }
+
+
+      if (barData2.length === 3) {
+         if (barData2[0].date === '') {
+            barData2.shift()
+         }
+      }
+
+      set('barData2', JSON.stringify(barData2))
+
+   }
+
+
+
+
+} else {
+
    var barData2 = [];
 
 }
@@ -342,7 +404,7 @@ document.addEventListener("click", (event) => {
 
       function mainText() {
 
-         if (input.value && inputSecond.value || inputSecond.value === 0) {
+         if (input.value && inputSecond.value) {
 
 
             document.querySelector('[data-money]').insertAdjacentHTML('beforeend', `
@@ -361,12 +423,36 @@ document.addEventListener("click", (event) => {
 
          let num = Number(inputSecond.value)
 
+         let today = new Date();
+         let day = today.getDate(); // день
+         let month = today.getMonth() + 1; // месяц (нумерация с 0)
+         let year = today.getFullYear(); // год
 
-         if ((num || num === 0) && input.value) {
+         const date = `${day}${month}${year}`;
 
-            if (!document.querySelector('[data-money-start]')) {
+         let checkDate = barData2.find(obj => obj.date === date)
 
+         if (checkDate) {
+
+            if (num && input.value) {
+
+               if (!document.querySelector('[data-money-start]')) {
+
+                  const profitClose = checkDate.c + num
+                  checkDate.c = profitClose
+
+                  if (profitClose >= checkDate.h) {
+                     checkDate.h = profitClose
+                  }
+               }
             }
+
+            chart2.update()
+
+            set('barData2', JSON.stringify(barData2))
+            const money = document.querySelector('[data-money]').innerHTML
+            set('money', money)
+
          }
 
       }
@@ -374,6 +460,149 @@ document.addEventListener("click", (event) => {
       let blurStatus = true
       let blurStatusSecond = true
 
+      input.addEventListener('keydown', (event) => {
+
+
+         if (event.key === 'Enter') {
+            event.preventDefault()
+
+            blurStatus = false
+
+            inputSecond.focus()
+
+         }
+
+      })
+
+
+      inputSecond.addEventListener('keydown', (event) => {
+
+         if (event.key === 'Enter') {
+            event.preventDefault()
+
+            blurStatusSecond = false
+
+            mainText()
+            mainNum()
+            input.remove()
+            inputSecond.remove()
+
+            document.querySelector('[data-money-pos-add]').style.display = 'flex'
+            document.querySelector('[data-money-neg-add]').style.display = 'flex'
+
+         }
+
+      })
+
+
+      input.addEventListener('blur', (event) => {
+
+         if (blurStatus) {
+
+            input.remove()
+            inputSecond.remove()
+
+            document.querySelector('[data-money-pos-add]').style.display = 'flex'
+            document.querySelector('[data-money-neg-add]').style.display = 'flex'
+
+         }
+
+      })
+
+
+      inputSecond.addEventListener('blur', (event) => {
+
+         if (blurStatusSecond) {
+
+            input.remove()
+            inputSecond.remove()
+
+            document.querySelector('[data-money-pos-add]').style.display = 'flex'
+            document.querySelector('[data-money-neg-add]').style.display = 'flex'
+
+         }
+
+
+      })
+   }
+   if (event.target.closest("[data-money-neg-add]")) {
+
+      document.querySelector('[data-money-pos-add]').style.display = 'none'
+      document.querySelector('[data-money-neg-add]').style.display = 'none'
+
+      let input = document.createElement('input')
+      let inputSecond = document.createElement('input')
+
+      input.type = 'text'
+      input.style = 'position: fixed; bottom: 10px; left: 10px; width: 100px; color: #FCFCFC;'
+      input.setAttribute("tabindex", "-1")
+
+      inputSecond.type = 'number'
+      inputSecond.style = 'position: fixed; bottom: 10px; left: 135px; width: 40px; color: rgb(75, 192, 192);'
+      inputSecond.setAttribute("tabindex", "-1")
+
+      document.body.appendChild(input)
+      document.body.appendChild(inputSecond)
+
+
+      input.focus()
+
+      function mainText() {
+
+         if (input.value && inputSecond.value) {
+
+            document.querySelector('[data-money]').insertAdjacentHTML('beforeend', `
+            <div data-money-shell>
+            <div data-money-text>${input.value}</div>
+            <div data-money-num data-money-lose>${inputSecond.value}</div>
+            </div>
+            `)
+
+
+         }
+
+      }
+
+      function mainNum() {
+
+         let num = Number(inputSecond.value)
+
+         let today = new Date();
+         let day = today.getDate(); // день
+         let month = today.getMonth() + 1; // месяц (нумерация с 0)
+         let year = today.getFullYear(); // год
+
+         const date = `${day}${month}${year}`;
+
+         let checkDate = barData2.find(obj => obj.date === date)
+
+         if (checkDate) {
+
+            if (num && input.value) {
+
+               if (!document.querySelector('[data-money-start]')) {
+
+                  const loseClose = checkDate.c - num
+                  checkDate.c = loseClose
+
+                  if (loseClose <= checkDate.l) {
+                     checkDate.l = loseClose
+                  }
+               }
+            }
+
+            chart2.update()
+
+            set('barData2', JSON.stringify(barData2))
+            const money = document.querySelector('[data-money]').innerHTML
+            set('money', money)
+
+         }
+
+      }
+
+      let blurStatus = true
+      let blurStatusSecond = true
 
       input.addEventListener('keydown', (event) => {
 
@@ -749,7 +978,6 @@ document.addEventListener("click", (event) => {
 
       })
 
-
       inputSecond.addEventListener('blur', (event) => {
 
          if (blurStatusSecond) {
@@ -763,9 +991,7 @@ document.addEventListener("click", (event) => {
 
          }
 
-
       })
-
 
    }
 
@@ -796,7 +1022,6 @@ document.addEventListener("click", (event) => {
 
       let num
 
-
       function mainText() {
 
          if (input.value && inputSecond.value || inputSecond.value === 0) {
@@ -824,14 +1049,6 @@ document.addEventListener("click", (event) => {
          
         </div>
         `)
-            /*
-                    const base = document.querySelector('[data-body]').innerHTML
-                    
-                    set('base', base) 
-                    
-                    const stat = document.querySelector('[data-stat]').innerHTML
-                    set('stat', stat) 
-                    */
 
          }
 
