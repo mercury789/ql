@@ -244,12 +244,12 @@ var chart2 = new Chart(ctx2, {
 
             borderColor: '#100F14',
             backgroundColors: {
-               up: 'rgba(192, 184, 75, 0.5)',
+               up: 'rgba(255, 230, 2, 0.5)',
                down: 'rgba(255, 99, 132, 0.5)',
                unchanged: 'rgba(201, 203, 207, 0.5)',
             },
             borderColors: {
-               up: 'rgb(192, 184, 75)',
+               up: 'rgb(255, 230, 2)',
                down: 'rgb(255, 99, 132)',
                unchanged: 'rgb(201, 203, 207)',
             }
@@ -293,7 +293,6 @@ var chart2 = new Chart(ctx2, {
 if (get('base')) {
    document.querySelector('[data-body]').innerHTML = get('base')
    document.querySelector('[data-stat]').innerHTML = get('stat')
-   document.querySelector('[data-money-stat]').innerHTML = get('moneyStat')
 
 
 } else {
@@ -343,7 +342,30 @@ if (get('base')) {
       <span> </span>
       <span class='name'>MN/PRC</span>
       <span> </span>
-      <span data-statmoney-procent>0.00%</span>
+      <span data-statmoney-procent>0.00</span>
+   </div>
+ 
+   <div><span data-statmoney-num>0.00</span><span> </span></div>
+  
+   <div>⠀</div>
+  
+  `
+
+}
+if (get('moneyStat')) {
+   document.querySelector('[data-money-stat]').innerHTML = get('moneyStat')
+
+
+} else {
+
+   document.querySelector('[data-money-stat]').innerHTML = `
+  
+   <div class="stat-top">
+      <div class="icon"><img data-money-rang src="icon/0.png"></div>
+      <span> </span>
+      <span class='name'>MN/PRC</span>
+      <span> </span>
+      <span data-statmoney-procent>0.00</span>
    </div>
  
    <div><span data-statmoney-num>0.00</span><span> </span></div>
@@ -419,7 +441,7 @@ document.addEventListener("click", (event) => {
 
 
       inputSecond.type = 'number'
-      inputSecond.style = 'position: fixed; bottom: 10px; left: 135px; width: 40px; color: rgb(75, 192, 192);'
+      inputSecond.style = 'position: fixed; bottom: 10px; left: 135px; width: 40px; color: rgb(255, 230, 2);'
       inputSecond.setAttribute("tabindex", "-1")
 
 
@@ -434,7 +456,7 @@ document.addEventListener("click", (event) => {
          if (input.value && inputSecond.value) {
 
 
-            document.querySelector('[data-money]').insertAdjacentHTML('beforeend', `
+            document.querySelector('[data-money]').insertAdjacentHTML('afterbegin', `
             <div data-money-shell>
             <div data-money-text>${input.value}</div>
             <div data-money-num data-money-profit>${inputSecond.value}</div>
@@ -466,7 +488,24 @@ document.addEventListener("click", (event) => {
                if (!document.querySelector('[data-money-start]')) {
 
                   const profitClose = checkDate.c + num
+                  const cleanProfitUP = profitClose - checkDate.o
+                  const cleanProfitDOWN = checkDate.o - profitClose
                   checkDate.c = profitClose
+
+                  const statNum = document.querySelector('[data-statmoney-num]')
+                  const statProcent = document.querySelector('[data-statmoney-procent]')
+
+                  statNum.innerText = profitClose.toFixed(2)
+                  if (profitClose >= checkDate.o) {
+                     statProcent.innerText = `+${cleanProfitUP.toFixed(2)}`
+                     statNum.style = 'color: rgb(255, 230, 2);'
+                     statProcent.style = 'color: rgb(255, 230, 2); background-color: rgba(255, 230, 2, 0.5);'
+                  } else {
+                     statProcent.innerText = `-${cleanProfitDOWN.toFixed(2)}`
+                     statNum.style = 'color:  rgb(255, 99, 132);'
+                     statProcent.style = 'color:  rgb(255, 99, 132); background-color: rgba(255, 99, 132, 0.5);'
+                  }
+                  set('moneyStat', document.querySelector('[data-money-stat]').innerHTML)
 
                   if (profitClose >= checkDate.h) {
                      checkDate.h = profitClose
@@ -497,7 +536,6 @@ document.addEventListener("click", (event) => {
                   let year = today.getFullYear(); // год
 
                   const date = `${day}${month}${year}`;
-
 
                   barData2.push({ x: Date.now() - 86400000, o: profitSum, h: profitSum, l: profitSum, c: profitSum, date: '' })
 
@@ -599,7 +637,7 @@ document.addEventListener("click", (event) => {
       input.setAttribute("tabindex", "-1")
 
       inputSecond.type = 'number'
-      inputSecond.style = 'position: fixed; bottom: 10px; left: 135px; width: 40px; color: rgb(75, 192, 192);'
+      inputSecond.style = 'position: fixed; bottom: 10px; left: 135px; width: 40px; color: rgb(255, 99, 132);'
       inputSecond.setAttribute("tabindex", "-1")
 
       document.body.appendChild(input)
@@ -612,7 +650,7 @@ document.addEventListener("click", (event) => {
 
          if (input.value && inputSecond.value) {
 
-            document.querySelector('[data-money]').insertAdjacentHTML('beforeend', `
+            document.querySelector('[data-money]').insertAdjacentHTML('afterbegin', `
             <div data-money-shell>
             <div data-money-text>${input.value}</div>
             <div data-money-num data-money-lose>${inputSecond.value}</div>
@@ -644,12 +682,31 @@ document.addEventListener("click", (event) => {
                if (!document.querySelector('[data-money-start]')) {
 
                   const loseClose = checkDate.c - num
+                  const cleanLoseDOWN = checkDate.o - loseClose
+                  const cleanLoseUP = loseClose - checkDate.o
                   checkDate.c = loseClose
+
+                  const statNum = document.querySelector('[data-statmoney-num]')
+                  const statProcent = document.querySelector('[data-statmoney-procent]')
+
+                  statNum.innerText = loseClose.toFixed(2)
+                  if (loseClose <= checkDate.o) {
+                     statProcent.innerText = `-${cleanLoseDOWN.toFixed(2)}`
+                     statNum.style = 'color:  rgb(255, 99, 132);'
+                     statProcent.style = 'color: rgb(255, 99, 132); background-color: rgba(255, 99, 132, 0.5);'
+
+                  } else {
+                     statProcent.innerText = `+${cleanLoseUP.toFixed(2)}`
+                     statNum.style = 'color:  rgb(255, 230, 2);'
+                     statProcent.style = 'color: rgb(255, 230, 2); background-color: rgba(255, 230, 2, 0.5);'
+                  }
+                  set('moneyStat', document.querySelector('[data-money-stat]').innerHTML)
 
                   if (loseClose <= checkDate.l) {
                      checkDate.l = loseClose
                   }
                }
+
             }
 
             chart2.update()
@@ -939,6 +996,9 @@ document.addEventListener("click", (event) => {
                procent = procent.toFixed(2)
                document.querySelector('[data-procent]').innerText = `${procent}`
                document.querySelector('[data-rang]').setAttribute('src', `icon/${rang(Number(procent))}.png`)
+               document.querySelector('[data-money-rang]').setAttribute('src', `icon/${rang(Number(procent))}.png`)
+               const moneyStat = document.querySelector('[data-money-stat]').innerHTML
+               set('moneyStat', moneyStat)
                document.querySelector('body').style = `background-image: url("bg/${bgRang(Number(procent))}.jpg");`
                set('bgRang', `background-image: url("bg/${bgRang(Number(procent))}.jpg");`)
                console.log(`RANG: ${bgRang(Number(procent))}`);
@@ -1258,6 +1318,9 @@ document.addEventListener("click", (event) => {
                procent = procent.toFixed(2)
                document.querySelector('[data-procent]').innerText = `${procent}`
                document.querySelector('[data-rang]').setAttribute('src', `icon/${rang(Number(procent))}.png`)
+               document.querySelector('[data-money-rang]').setAttribute('src', `icon/${rang(Number(procent))}.png`)
+               const moneyStat = document.querySelector('[data-money-stat]').innerHTML
+               set('moneyStat', moneyStat)
                document.querySelector('body').style = `background-image: url("bg/${bgRang(Number(procent))}.jpg");`
                set('bgRang', `background-image: url("bg/${bgRang(Number(procent))}.jpg");`)
                console.log(`RANG: ${bgRang(Number(procent))}`);
@@ -1390,6 +1453,7 @@ document.addEventListener("click", (event) => {
    if (event.target.closest("[data-money-clear]")) {
 
       rem('money')
+      rem('moneyStat')
       rem('barData2')
       event.target.style.backgroundColor = '#33181B'
 
@@ -1440,6 +1504,9 @@ document.addEventListener("click", (event) => {
 
       document.querySelector('[data-procent]').innerText = `${procent.toFixed(2)}`
       document.querySelector('[data-rang]').setAttribute('src', `icon/${rang(Number(procent))}.png`)
+      document.querySelector('[data-money-rang]').setAttribute('src', `icon/${rang(Number(procent))}.png`)
+      const moneyStat = document.querySelector('[data-money-stat]').innerHTML
+      moneyStat('moneyStat', moneyStat)
       document.querySelector('body').style = `background-image: url("bg/${bgRang(Number(procent))}.jpg");`
       set('bgRang', `background-image: url("bg/${bgRang(Number(procent))}.jpg");`)
       console.log(`RANG: ${bgRang(Number(procent))}`);
@@ -1460,6 +1527,10 @@ document.addEventListener("click", (event) => {
       const bgRang = get('bgRang');
       const taskBody = get('taskBody');
 
+      const barData2 = get('barData2');
+      const money = get('money');
+      const moneyStat = get('moneyStat');
+
       let today = new Date();
       let day = today.getDate(); // день
       let month = today.getMonth() + 1; // месяц (нумерация с 0)
@@ -1470,7 +1541,8 @@ document.addEventListener("click", (event) => {
       event.target.style.backgroundColor = '#112A21';
 
       const copy = barData;
-      const content = `${JSON.stringify(copy)}@${base}@${stat}@${bgRang}@${taskBody}`;
+      const copy2 = barData2;
+      const content = `${JSON.stringify(copy)}@${base}@${stat}@${bgRang}@${taskBody}@${JSON.stringify(copy2)}@${money}@${moneyStat}`;
       navigator.clipboard.writeText(content);
 
 
@@ -2242,7 +2314,6 @@ document.addEventListener("click", (event) => {
 
    }
 
-
 })
 
 
@@ -2255,24 +2326,32 @@ fileInput.addEventListener('change', function () {
 
       reader.readAsText(file)
 
-
       reader.onload = function (event) {
 
          const text = event.target.result
 
          fileInput.style.backgroundColor = '#112A21'
 
-
          let parts = text.split('@');
          let barData = parts[0];
+         let barData2 = parts[5];
          barData = JSON.parse(barData)
-
 
          set('barData', JSON.stringify(barData))
          set('base', parts[1])
          set('stat', parts[2])
          set('bgRang', parts[3])
          set('taskBody', parts[4])
+
+         if (barData2) {
+            barData2 = JSON.parse(barData2)
+            set('barData2', barData2)
+            set('money', parts[6])
+            set('moneyStat', parts[7])
+         }
+
+
+
 
          console.log(`BGRANG: ${parts[3]}`);
 
