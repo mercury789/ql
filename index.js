@@ -541,7 +541,7 @@ document.addEventListener("click", (event) => {
                      const money = document.querySelector('[data-money]').innerHTML
                      set('money', money)
 
-                  }
+                  } 
 
                }
             }
