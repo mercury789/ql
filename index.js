@@ -427,40 +427,156 @@ document.addEventListener("click", (event) => {
 
    }
 
-   if (event.target.closest("[data-money-pos-add]")) {
+   if (!event.target.closest("[data-money-categorie]") && !event.target.closest("[data-money-pos-add]") && !event.target.closest("[data-money-neg-add]")) {
+      const input = document.querySelector('[data-temp-input]')
+      document.querySelector('[data-money-pos-add]').style.display = 'flex'
+      document.querySelector('[data-money-neg-add]').style.display = 'flex'
+      document.querySelector('[data-money-create-categorie]').style.display = 'flex'
+      if (input) {
+         input.remove()
+      }
+      document.querySelector('[data-money-categories]').style.display = 'none'
+   }
 
+
+   if (event.target.closest("[data-money-categorie]")) {
+
+      const text = event.target.closest("[data-money-categorie]").innerText
+      const input = document.querySelector('[data-temp-input]')
+      const inputValue = Number(input.value)
+
+      if (inputValue) {
+
+         document.querySelector('[data-money]').insertAdjacentHTML('afterbegin', `
+            <div data-money-shell>
+            <div data-money-text>${text}</div>
+            <div data-money-num data-money-profit>${inputValue}</div>
+            </div>
+            `)
+
+         document.querySelector('[data-money-pos-add]').style.display = 'flex'
+         document.querySelector('[data-money-neg-add]').style.display = 'flex'
+         document.querySelector('[data-money-create-categorie]').style.display = 'flex'
+         input.remove()
+         document.querySelector('[data-money-categories]').style.display = 'none'
+
+         function mainNum() {
+
+            let num = Number(inputValue)
+
+            let today = new Date();
+            let day = today.getDate(); // день
+            let month = today.getMonth() + 1; // месяц (нумерация с 0)
+            let year = today.getFullYear(); // год
+
+            const date = `${day}${month}${year}`;
+
+            let checkDate = barData2.find(obj => obj.date === date)
+
+            if (checkDate) {
+
+               if (num) {
+
+                  if (!document.querySelector('[data-money-start]')) {
+
+                     const profitClose = checkDate.c + num
+                     const cleanProfitUP = profitClose - checkDate.o
+                     const cleanProfitDOWN = checkDate.o - profitClose
+                     checkDate.c = profitClose
+
+                     const statNum = document.querySelector('[data-statmoney-num]')
+                     const statProcent = document.querySelector('[data-statmoney-procent]')
+
+                     statNum.innerText = profitClose.toFixed(2)
+                     if (profitClose >= checkDate.o) {
+                        statProcent.innerText = `+${cleanProfitUP.toFixed(2)}`
+                        statNum.style = 'color: rgb(255, 230, 2);'
+                        statProcent.style = 'color: rgb(255, 230, 2); background-color: rgba(255, 230, 2, 0.5);'
+                     } else {
+                        statProcent.innerText = `-${cleanProfitDOWN.toFixed(2)}`
+                        statNum.style = 'color:  rgb(255, 99, 132);'
+                        statProcent.style = 'color:  rgb(255, 99, 132); background-color: rgba(255, 99, 132, 0.5);'
+                     }
+                     set('moneyStat', document.querySelector('[data-money-stat]').innerHTML)
+
+                     if (profitClose >= checkDate.h) {
+                        checkDate.h = profitClose
+                     }
+                  }
+
+               }
+
+               chart2.update()
+
+               set('barData2', JSON.stringify(barData2))
+               const money = document.querySelector('[data-money]').innerHTML
+               set('money', money)
+
+            } else {
+
+               if (num) {
+
+                  if (document.querySelector('[data-money-start]')) {
+
+                     document.querySelector('[data-money-start]').remove()
+
+                     let profitSum = Number(document.querySelector('[data-money-profit]').innerText)
+
+                     let today = new Date();
+                     let day = today.getDate(); // день
+                     let month = today.getMonth() + 1; // месяц (нумерация с 0)
+                     let year = today.getFullYear(); // год
+
+                     const date = `${day}${month}${year}`;
+
+                     barData2.push({ x: Date.now() - 86400000, o: profitSum, h: profitSum, l: profitSum, c: profitSum, date: '' })
+
+                     barData2.push({ x: Date.now(), o: profitSum, h: profitSum, l: profitSum, c: profitSum, date: date })
+
+                     document.querySelector('[data-money-neg-add]').classList.remove('_block')
+                     document.querySelector('[data-money-pos-add]').style = 'bottom: 55px; right: 10px;'
+
+                     set('barData2', JSON.stringify(barData2))
+                     chart2.update()
+                     const money = document.querySelector('[data-money]').innerHTML
+                     set('money', money)
+
+                  }
+
+               }
+            }
+
+         }
+         mainNum()
+
+      }
+
+   }
+
+
+   if (event.target.closest("[data-money-create-categorie]")) {
       document.querySelector('[data-money-pos-add]').style.display = 'none'
       document.querySelector('[data-money-neg-add]').style.display = 'none'
+      document.querySelector('[data-money-create-categorie]').style.display = 'none'
+      document.querySelector('[data-money-categories]').style.display = 'flex'
 
       let input = document.createElement('input')
-      let inputSecond = document.createElement('input')
 
       input.type = 'text'
       input.style = 'position: fixed; bottom: 10px; left: 10px; width: 100px; color: #FCFCFC;'
       input.setAttribute("tabindex", "-1")
 
-
-      inputSecond.type = 'number'
-      inputSecond.style = 'position: fixed; bottom: 10px; left: 135px; width: 40px; color: rgb(255, 230, 2);'
-      inputSecond.setAttribute("tabindex", "-1")
-
-
       document.body.appendChild(input)
-      document.body.appendChild(inputSecond)
-
 
       input.focus()
 
+
       function mainText() {
 
-         if (input.value && inputSecond.value) {
+         if (input.value && input.value !== '') {
 
-
-            document.querySelector('[data-money]').insertAdjacentHTML('afterbegin', `
-            <div data-money-shell>
-            <div data-money-text>${input.value}</div>
-            <div data-money-num data-money-profit>${inputSecond.value}</div>
-            </div>
+            document.querySelector('[data-money-categories]').insertAdjacentHTML('afterbegin', `
+            <div data-money-categorie>${input.value}</div>
             `)
 
 
@@ -468,166 +584,73 @@ document.addEventListener("click", (event) => {
 
       }
 
-      function mainNum() {
-
-         let num = Number(inputSecond.value)
-
-         let today = new Date();
-         let day = today.getDate(); // день
-         let month = today.getMonth() + 1; // месяц (нумерация с 0)
-         let year = today.getFullYear(); // год
-
-         const date = `${day}${month}${year}`;
-
-         let checkDate = barData2.find(obj => obj.date === date)
-
-         if (checkDate) {
-
-            if (num && input.value) {
-
-               if (!document.querySelector('[data-money-start]')) {
-
-                  const profitClose = checkDate.c + num
-                  const cleanProfitUP = profitClose - checkDate.o
-                  const cleanProfitDOWN = checkDate.o - profitClose
-                  checkDate.c = profitClose
-
-                  const statNum = document.querySelector('[data-statmoney-num]')
-                  const statProcent = document.querySelector('[data-statmoney-procent]')
-
-                  statNum.innerText = profitClose.toFixed(2)
-                  if (profitClose >= checkDate.o) {
-                     statProcent.innerText = `+${cleanProfitUP.toFixed(2)}`
-                     statNum.style = 'color: rgb(255, 230, 2);'
-                     statProcent.style = 'color: rgb(255, 230, 2); background-color: rgba(255, 230, 2, 0.5);'
-                  } else {
-                     statProcent.innerText = `-${cleanProfitDOWN.toFixed(2)}`
-                     statNum.style = 'color:  rgb(255, 99, 132);'
-                     statProcent.style = 'color:  rgb(255, 99, 132); background-color: rgba(255, 99, 132, 0.5);'
-                  }
-                  set('moneyStat', document.querySelector('[data-money-stat]').innerHTML)
-
-                  if (profitClose >= checkDate.h) {
-                     checkDate.h = profitClose
-                  }
-               }
-
-            }
-
-            chart2.update()
-
-            set('barData2', JSON.stringify(barData2))
-            const money = document.querySelector('[data-money]').innerHTML
-            set('money', money)
-
-         } else {
-
-            if (num && input.value) {
-
-               if (document.querySelector('[data-money-start]')) {
-
-                  document.querySelector('[data-money-start]').remove()
-
-                  let profitSum = Number(document.querySelector('[data-money-profit]').innerText)
-
-                  let today = new Date();
-                  let day = today.getDate(); // день
-                  let month = today.getMonth() + 1; // месяц (нумерация с 0)
-                  let year = today.getFullYear(); // год
-
-                  const date = `${day}${month}${year}`;
-
-                  barData2.push({ x: Date.now() - 86400000, o: profitSum, h: profitSum, l: profitSum, c: profitSum, date: '' })
-
-                  barData2.push({ x: Date.now(), o: profitSum, h: profitSum, l: profitSum, c: profitSum, date: date })
-
-                  document.querySelector('[data-money-neg-add]').classList.remove('_block')
-                  document.querySelector('[data-money-pos-add]').style = 'bottom: 55px; right: 10px;'
-
-                  set('barData2', JSON.stringify(barData2))
-                  chart2.update()
-                  const money = document.querySelector('[data-money]').innerHTML
-                  set('money', money)
-
-               }
-
-            }
-         }
-
-      }
-
       let blurStatus = true
-      let blurStatusSecond = true
 
       input.addEventListener('keydown', (event) => {
-
 
          if (event.key === 'Enter') {
             event.preventDefault()
 
             blurStatus = false
 
-            inputSecond.focus()
-
-         }
-
-      })
-
-
-      inputSecond.addEventListener('keydown', (event) => {
-
-         if (event.key === 'Enter') {
-            event.preventDefault()
-
-            blurStatusSecond = false
-
-            mainText()
-            mainNum()
             input.remove()
-            inputSecond.remove()
 
             document.querySelector('[data-money-pos-add]').style.display = 'flex'
             document.querySelector('[data-money-neg-add]').style.display = 'flex'
-
+            document.querySelector('[data-money-create-categorie]').style.display = 'flex'
+            document.querySelector('[data-money-categories]').style.display = 'none'
+            mainText()
          }
 
       })
-
 
       input.addEventListener('blur', (event) => {
 
          if (blurStatus) {
-
             input.remove()
-            inputSecond.remove()
 
             document.querySelector('[data-money-pos-add]').style.display = 'flex'
             document.querySelector('[data-money-neg-add]').style.display = 'flex'
-
+            document.querySelector('[data-money-create-categorie]').style.display = 'flex'
+            document.querySelector('[data-money-categories]').style.display = 'none'
          }
 
       })
 
 
-      inputSecond.addEventListener('blur', (event) => {
-
-         if (blurStatusSecond) {
-
-            input.remove()
-            inputSecond.remove()
-
-            document.querySelector('[data-money-pos-add]').style.display = 'flex'
-            document.querySelector('[data-money-neg-add]').style.display = 'flex'
-
-         }
+   }
 
 
-      })
+   if (event.target.closest("[data-money-pos-add]")) {
+
+      document.querySelector('[data-money-pos-add]').style.display = 'none'
+      document.querySelector('[data-money-neg-add]').style.display = 'none'
+      document.querySelector('[data-money-categories]').style.display = 'flex'
+      document.querySelector('[data-money-create-categorie]').style.display = 'none'
+
+      let input = document.createElement('input')
+
+      input.type = 'number'
+      input.style = 'position: fixed; bottom: 10px; left: 10px; width: 40px; color: #FCFCFC;'
+      input.setAttribute("tabindex", "-1")
+      input.setAttribute("data-temp-input", "")
+
+      document.body.appendChild(input)
+
+      input.focus()
+
+
+
+
    }
    if (event.target.closest("[data-money-neg-add]")) {
 
       document.querySelector('[data-money-pos-add]').style.display = 'none'
       document.querySelector('[data-money-neg-add]').style.display = 'none'
+      document.querySelector('[data-money-categories]').style.display = 'flex'
+      document.querySelector('[data-money-create-categorie]').style.display = 'none'
+
+
 
       let input = document.createElement('input')
       let inputSecond = document.createElement('input')
@@ -751,6 +774,10 @@ document.addEventListener("click", (event) => {
 
             document.querySelector('[data-money-pos-add]').style.display = 'flex'
             document.querySelector('[data-money-neg-add]').style.display = 'flex'
+            document.querySelector('[data-money-categories]').style.display = 'none'
+            document.querySelector('[data-money-create-categorie]').style.display = 'flex'
+
+
 
          }
 
@@ -766,6 +793,10 @@ document.addEventListener("click", (event) => {
 
             document.querySelector('[data-money-pos-add]').style.display = 'flex'
             document.querySelector('[data-money-neg-add]').style.display = 'flex'
+            document.querySelector('[data-money-categories]').style.display = 'none'
+            document.querySelector('[data-money-create-categorie]').style.display = 'flex'
+
+
 
          }
 
@@ -781,6 +812,10 @@ document.addEventListener("click", (event) => {
 
             document.querySelector('[data-money-pos-add]').style.display = 'flex'
             document.querySelector('[data-money-neg-add]').style.display = 'flex'
+            document.querySelector('[data-money-categories]').style.display = 'none'
+            document.querySelector('[data-money-create-categorie]').style.display = 'flex'
+
+
 
          }
 

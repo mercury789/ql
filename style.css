@@ -620,3 +620,54 @@ video {
 [data-money-stat]._hidden {
    display: none;
 }
+
+[data-money-create-categorie] {
+   width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #7E8086;
+  
+  position: fixed;
+  z-index: 50;
+}
+
+
+[data-money-categories] {
+  border-radius: 5px;
+  
+  display: none;
+  justify-content: center;
+  flex-direction: column;
+  background-color: rgba(60, 60, 60, 1);
+  
+  position: fixed;
+  z-index: 50;
+
+  font-size: 14px;
+    font-weight: 500;
+
+   overflow: hidden;
+}
+
+[data-money-categorie] {
+   color: white;
+   background-color: rgba(29, 28, 34, 0.5);
+
+   padding-top: 5px;
+   padding-bottom: 5px;
+   padding-left: 10px;
+   padding-right: 10px;
+}
+
+[data-money-categorie]:not(:last-child) {
+   border-bottom: 1px solid #3C3C3C;
+
+}
+[data-money-categories] {
+   display: none;
+}
+
