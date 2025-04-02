@@ -593,6 +593,7 @@ video {
 
 
 [data-money] {
+   display: none;
 }
 [data-money-shell] {
    display: flex;
@@ -671,3 +672,60 @@ video {
    display: none;
 }
 
+
+
+[data-money-tabs] {
+   display: flex;
+   align-items: center;
+   gap: 15px;
+
+   /* border-bottom: 1px solid #3C3C3C; */
+   margin-bottom: 7.5px;
+   font-size: 16px;
+
+}
+
+[data-money-tab]._active {
+   border-bottom: 1px solid rgb(255, 230, 2);
+
+} 
+
+[data-money]._active {
+   display: block;
+}
+
+
+[data-money-tab] {
+   padding-top: 10px;
+   padding-bottom: 10px;
+
+   border-bottom: 1px solid transparent;
+
+} 
+
+[data-assets] {
+   display: none;
+
+   width: 70%;
+   font-size: 18px;
+}
+[data-assets]._active {
+   display: block;
+}
+
+[data-asset] {
+   display: flex;
+   align-items: center;
+   justify-content: space-between;
+   position: relative;
+
+   padding-top: 2px;
+   padding-bottom: 2px;
+}
+
+
+
+
+[data-asset-text]._active {
+   color: orange;
+}
