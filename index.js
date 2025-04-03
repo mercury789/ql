@@ -265,31 +265,6 @@ var chart2 = new Chart(ctx2, {
    }
 });
 
-// var update = function () {
-//    var dataset = chart.config.data.datasets[0];
-
-//    var type = document.getElementById('type').value;
-//    chart.config.type = type;
-
-//    var colorScheme = document.getElementById('color-scheme').value;
-//    if (colorScheme === 'neon') {
-//       chart.config.data.datasets[0].backgroundColors = {
-//          up: '#20B16B',
-//          down: '#EE4448',
-//          unchanged: '#999',
-
-//       };
-//    } else {
-//       delete chart.config.data.datasets[0].backgroundColors;
-//    }
-
-
-//    chart.update();
-// };
-
-// [...document.getElementsByTagName('select')].forEach(element => element.addEventListener('change', update));
-
-
 if (get('base')) {
    document.querySelector('[data-body]').innerHTML = get('base')
    document.querySelector('[data-stat]').innerHTML = get('stat')
@@ -380,13 +355,17 @@ document.addEventListener("click", (event) => {
 
    if (event.target.closest("[data-mode]")) {
 
-      if (document.querySelector('[data-body]').classList.contains('_active')) {
-         document.querySelector('[data-body]').classList.remove('_active')
-         document.querySelector('[data-task-main]').classList.remove('_active')
+      if (event.target.classList.contains('_active')) {
+         event.target.classList.remove('_active')
+
+         document.querySelector('[data-body]').style.display = 'block'
+         document.querySelector('[data-task-main]').style.display = 'none'
 
       } else {
-         document.querySelector('[data-body]').classList.add('_active')
-         document.querySelector('[data-task-main]').classList.add('_active')
+         event.target.classList.add('_active')
+
+         document.querySelector('[data-body]').style.display = 'none'
+         document.querySelector('[data-task-main]').style.display = 'block'
       }
 
    }
@@ -400,203 +379,271 @@ document.addEventListener("click", (event) => {
       const stat = document.querySelector('[data-stat]')
       const moneyStat = document.querySelector('[data-money-stat]')
 
+      const moneyPosAdd = document.querySelector('[data-money-pos-add]')
+      const moneyNegAdd = document.querySelector('[data-money-neg-add]')
+      const posAdd = document.querySelector('[data-pos-add]')
+      const negAdd = document.querySelector('[data-neg-add]')
+
 
       if (event.target.classList.contains('_active')) {
          event.target.classList.remove('_active')
 
-         chart2.classList.remove('_active')
-         chart.classList.add('_active')
+         chart2.style.display = 'block'
 
-         body.classList.remove('_hidden')
-         task.classList.remove('_hidden')
-         mode.classList.remove('_hidden')
-         stat.classList.remove('_hidden')
-         moneyStat.classList.add('_hidden')
+         moneyPosAdd.style.display = 'flex'
+         moneyNegAdd.style.display = 'flex'
+         moneyStat.style.display = 'block'
+
+         chart.style.display = 'none'
+         body.style.display = 'none'
+         task.style.display = 'none'
+         mode.style.display = 'none'
+         stat.style.display = 'none'
+         posAdd.style.display = 'none'
+         negAdd.style.display = 'none'
+
       } else {
          event.target.classList.add('_active')
 
-         chart2.classList.add('_active')
-         chart.classList.remove('_active')
+         chart.style.display = 'block'
 
-         body.classList.add('_hidden')
-         task.classList.add('_hidden')
-         mode.classList.add('_hidden')
-         stat.classList.add('_hidden')
-         moneyStat.classList.remove('_hidden')
+         body.style.display = 'block'
+         task.style.display = 'block'
+         mode.style.display = 'flex'
+         stat.style.display = 'block'
+         posAdd.style.display = 'flex'
+         negAdd.style.display = 'flex'
+
+
+         chart2.style.display = 'none'
+         moneyPosAdd.style.display = 'none'
+         moneyNegAdd.style.display = 'none'
+         moneyStat.style.display = 'none'
+
       }
 
    }
 
-   if (!event.target.closest("[data-money-categorie]") && !event.target.closest("[data-money-pos-add]") && !event.target.closest("[data-money-neg-add]")) {
-      const input = document.querySelector('[data-temp-input]')
-      document.querySelector('[data-money-pos-add]').style.display = 'flex'
-      document.querySelector('[data-money-neg-add]').style.display = 'flex'
-      if (input) {
-         input.remove()
-      }
-      document.querySelector('[data-money-categories]').style.display = 'none'
-   }
+
 
    if (event.target.closest("[data-money-categorie]")) {
 
       const text = event.target.closest("[data-money-categorie]").innerText
-      const input = document.querySelector('[data-temp-input]')
-      const inputValue = Number(input.value)
-      const inputAtt = document.querySelector('[data-temp-input]').getAttribute('data-temp-input')
+      let input = document.querySelector('input[tabindex="-1"]')
 
-      if (inputValue) {
+      if (input) {
 
-         if (inputAtt === 'pos') {
-            document.querySelector('[data-money]').insertAdjacentHTML('afterbegin', `
+         const inputValue = Number(input.value)
+         const inputAtt = document.querySelector('[data-temp-input]').getAttribute('data-temp-input')
+
+         if (inputValue) {
+
+            if (inputAtt === 'pos') {
+               document.querySelector('[data-money]').insertAdjacentHTML('afterbegin', `
                <div data-money-shell>
                <div data-money-text>${text}</div>
                <div data-money-num data-money-profit>${inputValue.toFixed(2)}</div>
                </div>
                `)
-         } else {
-            document.querySelector('[data-money]').insertAdjacentHTML('afterbegin', `
+            } else {
+               document.querySelector('[data-money]').insertAdjacentHTML('afterbegin', `
                <div data-money-shell>
                <div data-money-text>${text}</div>
                <div data-money-num data-money-lose>${inputValue.toFixed(2)}</div>
                </div>
                `)
-         }
+            }
 
-         document.querySelector('[data-money-pos-add]').style.display = 'flex'
-         document.querySelector('[data-money-neg-add]').style.display = 'flex'
-         input.remove()
-         document.querySelector('[data-money-categories]').style.display = 'none'
+            document.querySelector('[data-money-pos-add]').style.display = 'flex'
+            document.querySelector('[data-money-neg-add]').style.display = 'flex'
+            document.querySelector('[data-task-shadow]').classList.remove('_active')
+            input.remove()
+            event.target.closest("[data-money-categories]").style.display = 'none'
 
-         let num = Number(inputValue)
+            let num = Number(inputValue)
 
-         let today = new Date();
-         let day = today.getDate(); // день
-         let month = today.getMonth() + 1; // месяц (нумерация с 0)
-         let year = today.getFullYear(); // год
-         const date = `${day}${month}${year}`;
+            let today = new Date();
+            let day = today.getDate(); // день
+            let month = today.getMonth() + 1; // месяц (нумерация с 0)
+            let year = today.getFullYear(); // год
+            const date = `${day}${month}${year}`;
 
-         let checkDate = barData2.find(obj => obj.date === date)
+            let checkDate = barData2.find(obj => obj.date === date)
 
-         if (checkDate) {
+            if (checkDate) {
 
-            if (num) {
+               if (num) {
 
-               if (!document.querySelector('[data-money-start]')) {
+                  if (!document.querySelector('[data-money-start]')) {
 
-                  if (inputAtt === 'pos') {
-                     const profitClose = checkDate.c + num
-                     const cleanProfitUP = profitClose - checkDate.o
-                     const cleanProfitDOWN = checkDate.o - profitClose
-                     checkDate.c = profitClose
+                     if (inputAtt === 'pos') {
+                        const profitClose = checkDate.c + num
+                        const cleanProfitUP = profitClose - checkDate.o
+                        const cleanProfitDOWN = checkDate.o - profitClose
+                        checkDate.c = profitClose
 
-                     const statNum = document.querySelector('[data-statmoney-num]')
-                     const statProcent = document.querySelector('[data-statmoney-procent]')
+                        const statNum = document.querySelector('[data-statmoney-num]')
+                        const statProcent = document.querySelector('[data-statmoney-procent]')
 
-                     const asset = document.querySelectorAll('[data-asset]')
-                     asset.forEach((asset) => {
-                        if (asset.querySelector('[data-asset-text]').innerText === text) {
-                           const newAssetNum = inputValue + Number(asset.querySelector('[data-asset-num]').innerText)
-                           asset.querySelector('[data-asset-num]').innerText = newAssetNum.toFixed(2)
+                        const asset = document.querySelectorAll('[data-asset]')
+                        asset.forEach((asset) => {
+                           if (asset.querySelector('[data-asset-text]').innerText === text) {
+                              const newAssetNum = inputValue + Number(asset.querySelector('[data-asset-num]').innerText)
+                              asset.querySelector('[data-asset-num]').innerText = newAssetNum.toFixed(2)
+                           }
+                        })
+
+                        statNum.innerText = profitClose.toFixed(2)
+                        if (profitClose >= checkDate.o) {
+                           statProcent.innerText = `+${cleanProfitUP.toFixed(2)}`
+                           statNum.style = 'color: rgb(255, 230, 2);'
+                           statProcent.style = 'color: rgb(255, 230, 2); background-color: rgba(255, 230, 2, 0.5);'
+                        } else {
+                           statProcent.innerText = `-${cleanProfitDOWN.toFixed(2)}`
+                           statNum.style = 'color:  rgb(255, 99, 132);'
+                           statProcent.style = 'color:  rgb(255, 99, 132); background-color: rgba(255, 99, 132, 0.5);'
                         }
-                     })
+                        set('moneyStat', document.querySelector('[data-money-stat]').innerHTML)
 
-                     statNum.innerText = profitClose.toFixed(2)
-                     if (profitClose >= checkDate.o) {
-                        statProcent.innerText = `+${cleanProfitUP.toFixed(2)}`
-                        statNum.style = 'color: rgb(255, 230, 2);'
-                        statProcent.style = 'color: rgb(255, 230, 2); background-color: rgba(255, 230, 2, 0.5);'
-                     } else {
-                        statProcent.innerText = `-${cleanProfitDOWN.toFixed(2)}`
-                        statNum.style = 'color:  rgb(255, 99, 132);'
-                        statProcent.style = 'color:  rgb(255, 99, 132); background-color: rgba(255, 99, 132, 0.5);'
-                     }
-                     set('moneyStat', document.querySelector('[data-money-stat]').innerHTML)
-
-                     if (profitClose >= checkDate.h) {
-                        checkDate.h = profitClose
-                     }
-                  } else {
-
-                     const loseClose = checkDate.c - num
-                     const cleanLoseDOWN = checkDate.o - loseClose
-                     const cleanLoseUP = loseClose - checkDate.o
-                     checkDate.c = loseClose
-
-                     const statNum = document.querySelector('[data-statmoney-num]')
-                     const statProcent = document.querySelector('[data-statmoney-procent]')
-
-                     const asset = document.querySelectorAll('[data-asset]')
-                     asset.forEach((asset) => {
-                        if (asset.querySelector('[data-asset-text]').innerText === text) {
-                           const newAssetNum = Number(asset.querySelector('[data-asset-num]').innerText) - inputValue
-                           asset.querySelector('[data-asset-num]').innerText = newAssetNum.toFixed(2)
+                        if (profitClose >= checkDate.h) {
+                           checkDate.h = profitClose
                         }
-                     })
-
-                     statNum.innerText = loseClose.toFixed(2)
-                     if (loseClose <= checkDate.o) {
-                        statProcent.innerText = `-${cleanLoseDOWN.toFixed(2)}`
-                        statNum.style = 'color:  rgb(255, 99, 132);'
-                        statProcent.style = 'color: rgb(255, 99, 132); background-color: rgba(255, 99, 132, 0.5);'
-
                      } else {
-                        statProcent.innerText = `+${cleanLoseUP.toFixed(2)}`
-                        statNum.style = 'color:  rgb(255, 230, 2);'
-                        statProcent.style = 'color: rgb(255, 230, 2); background-color: rgba(255, 230, 2, 0.5);'
-                     }
-                     set('moneyStat', document.querySelector('[data-money-stat]').innerHTML)
 
-                     if (loseClose <= checkDate.l) {
-                        checkDate.l = loseClose
+                        const loseClose = checkDate.c - num
+                        const cleanLoseDOWN = checkDate.o - loseClose
+                        const cleanLoseUP = loseClose - checkDate.o
+                        checkDate.c = loseClose
+
+                        const statNum = document.querySelector('[data-statmoney-num]')
+                        const statProcent = document.querySelector('[data-statmoney-procent]')
+
+                        const asset = document.querySelectorAll('[data-asset]')
+                        asset.forEach((asset) => {
+                           if (asset.querySelector('[data-asset-text]').innerText === text) {
+                              const newAssetNum = Number(asset.querySelector('[data-asset-num]').innerText) - inputValue
+                              asset.querySelector('[data-asset-num]').innerText = newAssetNum.toFixed(2)
+                           }
+                        })
+
+                        statNum.innerText = loseClose.toFixed(2)
+                        if (loseClose <= checkDate.o) {
+                           statProcent.innerText = `-${cleanLoseDOWN.toFixed(2)}`
+                           statNum.style = 'color:  rgb(255, 99, 132);'
+                           statProcent.style = 'color: rgb(255, 99, 132); background-color: rgba(255, 99, 132, 0.5);'
+
+                        } else {
+                           statProcent.innerText = `+${cleanLoseUP.toFixed(2)}`
+                           statNum.style = 'color:  rgb(255, 230, 2);'
+                           statProcent.style = 'color: rgb(255, 230, 2); background-color: rgba(255, 230, 2, 0.5);'
+                        }
+                        set('moneyStat', document.querySelector('[data-money-stat]').innerHTML)
+
+                        if (loseClose <= checkDate.l) {
+                           checkDate.l = loseClose
+                        }
+
                      }
 
                   }
 
                }
 
-            }
+               chart2.update()
 
-            chart2.update()
+               set('barData2', JSON.stringify(barData2))
+               const money = document.querySelector('[data-money]').innerHTML
+               set('money', money)
 
-            set('barData2', JSON.stringify(barData2))
-            const money = document.querySelector('[data-money]').innerHTML
-            set('money', money)
+            } else {
 
-         } else {
+               if (num) {
 
-            if (num) {
+                  if (document.querySelector('[data-money-start]')) {
 
-               if (document.querySelector('[data-money-start]')) {
+                     document.querySelector('[data-money-start]').remove()
 
-                  document.querySelector('[data-money-start]').remove()
+                     let profitSum = Number(document.querySelector('[data-money-profit]').innerText)
 
-                  let profitSum = Number(document.querySelector('[data-money-profit]').innerText)
+                     barData2.push({ x: Date.now() - 86400000, o: profitSum, h: profitSum, l: profitSum, c: profitSum, date: '' })
 
-                  barData2.push({ x: Date.now() - 86400000, o: profitSum, h: profitSum, l: profitSum, c: profitSum, date: '' })
+                     barData2.push({ x: Date.now(), o: profitSum, h: profitSum, l: profitSum, c: profitSum, date: date })
 
-                  barData2.push({ x: Date.now(), o: profitSum, h: profitSum, l: profitSum, c: profitSum, date: date })
+                     document.querySelector('[data-money-neg-add]').classList.remove('_block')
+                     document.querySelector('[data-money-pos-add]').style = 'bottom: 55px; right: 10px;'
 
-                  document.querySelector('[data-money-neg-add]').classList.remove('_block')
-                  document.querySelector('[data-money-pos-add]').style = 'bottom: 55px; right: 10px;'
+                     const asset = document.querySelectorAll('[data-asset]')
+                     asset.forEach((asset) => {
+                        if (asset.querySelector('[data-asset-text]').innerText === text) {
+                           const newAssetNum = Number(asset.querySelector('[data-asset-num]').innerText) + inputValue
+                           asset.querySelector('[data-asset-num]').innerText = newAssetNum.toFixed(2)
+                        }
+                     })
 
-                  const asset = document.querySelectorAll('[data-asset]')
-                  asset.forEach((asset) => {
-                     if (asset.querySelector('[data-asset-text]').innerText === text) {
-                        const newAssetNum = Number(asset.querySelector('[data-asset-num]').innerText) + inputValue
-                        asset.querySelector('[data-asset-num]').innerText = newAssetNum.toFixed(2)
-                     }
-                  })
+                     set('barData2', JSON.stringify(barData2))
+                     chart2.update()
+                     const money = document.querySelector('[data-money]').innerHTML
+                     set('money', money)
 
-                  set('barData2', JSON.stringify(barData2))
-                  chart2.update()
-                  const money = document.querySelector('[data-money]').innerHTML
-                  set('money', money)
+                  }
 
                }
+            }
+
+         }
+      } else {
+         document.querySelector('[data-money-pos-add]').style.display = 'none'
+         document.querySelector('[data-money-neg-add]').style.display = 'none'
+         const oldAsset = event.target.closest('[data-asset]')
+         const oldAssetNum = oldAsset.querySelector('[data-asset-num]')
+         document.querySelector('[data-dropdown]').remove()
+
+         input = document.createElement('input')
+
+         input.type = 'number'
+         input.style = 'position: fixed; bottom: 10px; left: 10px; width: 100px; color: #FCFCFC;'
+         input.setAttribute("tabindex", "-1")
+
+         document.body.appendChild(input)
+
+         input.focus()
+
+         input.addEventListener('keydown', (event) => {
+
+            if (event.key === 'Enter') {
+               event.preventDefault()
+
+               const inputValue = Number(input.value)
+
+               if (inputValue && inputValue <= Number(oldAssetNum.innerText)) {
+
+                  const oldNewNum = Number(oldAssetNum.innerText) - inputValue
+                  oldAssetNum.innerText = oldNewNum.toFixed(2)
+
+                  const assetTextAll = document.querySelectorAll('[data-asset-text]')
+                  assetTextAll.forEach((assetText) => {
+
+                     if (assetText.innerText === text) {
+                        const assetNum = assetText.closest('[data-asset]').querySelector('[data-asset-num]')
+
+                        const newNum = Number(assetNum.innerText) + inputValue
+                        assetNum.innerText = newNum.toFixed(2)
+
+                     }
+                  })
+               }
+
+               input.remove()
+
+               document.querySelector('[data-money-pos-add]').style.display = 'flex'
+               document.querySelector('[data-money-neg-add]').style.display = 'flex'
+               document.querySelector("[data-task-shadow]").classList.remove('_active')
+               document.querySelector("[data-asset-text]").classList.remove('_active')
+               document.querySelector("[data-dropdown]") && document.querySelector("[data-dropdown]").remove()
 
             }
-         }
 
+         })
       }
 
    }
@@ -632,35 +679,19 @@ document.addEventListener("click", (event) => {
                </div>
             `)
 
+            console.log(99999);
+
+
          }
 
       }
-
-      let blurStatus = true
 
       input.addEventListener('keydown', (event) => {
 
          if (event.key === 'Enter') {
             event.preventDefault()
 
-            blurStatus = false
-
-            input.remove()
-
-            document.querySelector('[data-money-pos-add]').style.display = 'flex'
-            document.querySelector('[data-money-neg-add]').style.display = 'flex'
-            document.querySelector("[data-task-shadow]").classList.remove('_active')
-            document.querySelector("[data-asset-text]").classList.remove('_active')
-            document.querySelector("[data-dropdown]") && document.querySelector("[data-dropdown]").remove()
-
             mainText()
-         }
-
-      })
-
-      input.addEventListener('blur', (event) => {
-
-         if (blurStatus) {
             input.remove()
 
             document.querySelector('[data-money-pos-add]').style.display = 'flex'
@@ -680,6 +711,7 @@ document.addEventListener("click", (event) => {
       document.querySelector('[data-money-pos-add]').style.display = 'none'
       document.querySelector('[data-money-neg-add]').style.display = 'none'
       document.querySelector('[data-money-categories]').style.display = 'flex'
+      document.querySelector('[data-task-shadow]').classList.add('_active')
 
       let input = document.createElement('input')
 
@@ -698,6 +730,7 @@ document.addEventListener("click", (event) => {
       document.querySelector('[data-money-pos-add]').style.display = 'none'
       document.querySelector('[data-money-neg-add]').style.display = 'none'
       document.querySelector('[data-money-categories]').style.display = 'flex'
+      document.querySelector('[data-task-shadow]').classList.add('_active')
 
       let input = document.createElement('input')
 
@@ -963,18 +996,11 @@ document.addEventListener("click", (event) => {
 
       }
 
-
-      let blurStatus = true
-      let blurStatusSecond = true
-
-
       input.addEventListener('keydown', (event) => {
 
 
          if (event.key === 'Enter') {
             event.preventDefault()
-
-            blurStatus = false
 
             inputSecond.focus()
 
@@ -988,41 +1014,8 @@ document.addEventListener("click", (event) => {
          if (event.key === 'Enter') {
             event.preventDefault()
 
-            blurStatusSecond = false
-
             mainText()
             mainNum()
-            input.remove()
-            inputSecond.remove()
-
-            document.querySelector('[data-pos-add]').style.display = 'flex'
-            document.querySelector('[data-neg-add]').style.display = 'flex'
-            document.querySelector('[data-mode]').style.display = 'flex'
-
-         }
-
-      })
-
-
-      input.addEventListener('blur', (event) => {
-
-         if (blurStatus) {
-
-            input.remove()
-            inputSecond.remove()
-
-            document.querySelector('[data-pos-add]').style.display = 'flex'
-            document.querySelector('[data-neg-add]').style.display = 'flex'
-            document.querySelector('[data-mode]').style.display = 'flex'
-
-         }
-
-      })
-
-      inputSecond.addEventListener('blur', (event) => {
-
-         if (blurStatusSecond) {
-
             input.remove()
             inputSecond.remove()
 
@@ -1060,8 +1053,6 @@ document.addEventListener("click", (event) => {
       document.body.appendChild(inputSecond)
 
       input.focus()
-
-      let num
 
       function mainText() {
 
@@ -1103,7 +1094,6 @@ document.addEventListener("click", (event) => {
          if ((num || num === 0) && input.value) {
 
             if (!document.querySelector('[data-start]')) {
-
 
                let sum = 0;
                document.querySelectorAll('[data-span]').forEach(div => {
@@ -1190,7 +1180,6 @@ document.addEventListener("click", (event) => {
 
                      document.querySelector('[data-procent]').style.color = 'rgb(255, 99, 132)'
 
-
                      let profit = procent - checkDate.o
                      profit = profit.toFixed(2)
 
@@ -1229,7 +1218,6 @@ document.addEventListener("click", (event) => {
                   }
 
                   checkDate.c = procent
-
 
                }
 
@@ -1288,18 +1276,11 @@ document.addEventListener("click", (event) => {
 
       }
 
-
-      let blurStatus = true
-      let blurStatusSecond = true
-
-
       input.addEventListener('keydown', (event) => {
 
 
          if (event.key === 'Enter') {
             event.preventDefault()
-
-            blurStatus = false
 
             inputSecond.focus()
 
@@ -1313,8 +1294,6 @@ document.addEventListener("click", (event) => {
          if (event.key === 'Enter') {
             event.preventDefault()
 
-            blurStatusSecond = false
-
             mainText()
             mainNum()
             input.remove()
@@ -1324,45 +1303,9 @@ document.addEventListener("click", (event) => {
             document.querySelector('[data-neg-add]').style.display = 'flex'
             document.querySelector('[data-mode]').style.display = 'flex'
 
-
          }
 
       })
-
-
-      input.addEventListener('blur', (event) => {
-
-         if (blurStatus) {
-
-            input.remove()
-            inputSecond.remove()
-
-            document.querySelector('[data-pos-add]').style.display = 'flex'
-            document.querySelector('[data-neg-add]').style.display = 'flex'
-            document.querySelector('[data-mode]').style.display = 'flex'
-
-
-         }
-
-      })
-
-
-      inputSecond.addEventListener('blur', (event) => {
-
-         if (blurStatusSecond) {
-
-            input.remove()
-            inputSecond.remove()
-
-            document.querySelector('[data-pos-add]').style.display = 'flex'
-            document.querySelector('[data-neg-add]').style.display = 'flex'
-            document.querySelector('[data-mode]').style.display = 'flex'
-
-         }
-
-
-      })
-
 
    }
 
@@ -1484,18 +1427,6 @@ document.addEventListener("click", (event) => {
       URL.revokeObjectURL(a.href);
    }
 
-
-   // if (event.target.closest("[data-export-log]")) {
-   //    let barDataClean = JSON.parse(get('barData'))
-
-   //    event.target.style.backgroundColor = '#112A21'
-
-
-   //    navigator.clipboard.writeText(`${JSON.stringify(barData)}`);
-
-   // }
-
-
    if (event.target.closest("[data-import]")) {
 
       event.target.style.backgroundColor = '#112A21'
@@ -1552,8 +1483,6 @@ document.addEventListener("click", (event) => {
       input.focus()
 
 
-      let blurStatus = true
-
       function mainNum() {
 
          let num = Number(input.value)
@@ -1570,7 +1499,6 @@ document.addEventListener("click", (event) => {
             }
 
             event.target.closest('[data-point]').querySelector('[data-decor]').style.width = `${decorProc * 10}%`
-
 
             if (!document.querySelector('[data-start]')) {
 
@@ -1737,11 +1665,9 @@ document.addEventListener("click", (event) => {
 
                      }
 
-
                   }
 
                   checkDate.c = procent
-
 
                }
 
@@ -1776,14 +1702,12 @@ document.addEventListener("click", (event) => {
                      posList.insertAdjacentHTML('beforeend', `${e.outerHTML}`)
                   })
 
-
                }
 
             }
 
 
             if (event.target.hasAttribute('data-neg-span')) {
-
 
                let points = document.querySelectorAll('[data-neg-point]')
 
@@ -1801,11 +1725,9 @@ document.addEventListener("click", (event) => {
                      posList.insertAdjacentHTML('beforeend', `${e.outerHTML}`)
                   })
 
-
                }
 
             }
-
 
             const base = document.querySelector('[data-body]').innerHTML
             set('base', base)
@@ -1817,13 +1739,10 @@ document.addEventListener("click", (event) => {
 
       }
 
-
       input.addEventListener('keydown', (event) => {
 
          if (event.key === 'Enter') {
             event.preventDefault()
-
-            blurStatus = false
 
             mainNum()
             input.remove()
@@ -1835,18 +1754,7 @@ document.addEventListener("click", (event) => {
 
 
       })
-      input.addEventListener('blur', () => {
 
-         if (blurStatus) {
-            input.remove()
-
-            document.querySelector('[data-pos-add]').style.display = 'flex'
-            document.querySelector('[data-neg-add]').style.display = 'flex'
-            document.querySelector('[data-mode]').style.display = 'flex'
-
-         }
-
-      })
 
    }
 
@@ -1873,15 +1781,7 @@ document.addEventListener("click", (event) => {
 
       input.focus()
 
-      let num
-
-      let blurStatus = true
-
-
-
       function name() {
-
-
 
          let newValue = input.value || oldValue
 
@@ -1903,34 +1803,10 @@ document.addEventListener("click", (event) => {
 
       input.addEventListener('keydown', (event) => {
 
-
-
          if (event.key === 'Enter') {
             event.preventDefault()
 
-
-
-            blurStatus = false
-
             name()
-            input.remove()
-
-            document.querySelector('[data-pos-add]').style.display = 'flex'
-            document.querySelector('[data-neg-add]').style.display = 'flex'
-            document.querySelector('[data-mode]').style.display = 'flex'
-
-
-         }
-
-      })
-      input.addEventListener('blur', () => {
-
-
-
-         if (blurStatus) {
-
-
-
             input.remove()
 
             document.querySelector('[data-pos-add]').style.display = 'flex'
@@ -1974,12 +1850,10 @@ function timePassed(dateString) {
    return minutes
 }
 
-
 if (get('taskBody')) {
    document.querySelector('[data-task-body]').innerHTML = get('taskBody')
 
 }
-
 
 document.addEventListener("click", (event) => {
 
@@ -2221,36 +2095,80 @@ document.addEventListener("click", (event) => {
    }
    if (targ.closest("[data-asset-rename]")) {
 
+      document.querySelector('[data-money-pos-add]').style.display = 'none'
+      document.querySelector('[data-money-neg-add]').style.display = 'none'
+      document.querySelector('[data-task-shadow]').classList.add('_active')
+
+      const input = document.createElement('input')
+
+      input.type = 'text'
+      input.style = 'position: fixed; bottom: 10px; left: 10px; width: 100px; color: #FCFCFC;'
+      input.setAttribute("tabindex", "-1")
+
+      document.body.appendChild(input)
+
+      input.focus()
+
       const targAsset = targ.closest("[data-asset]")
       const targText = targAsset.querySelector("[data-asset-text]")
       const moneyTextAll = document.querySelectorAll("[data-money-text]")
       const targDropdown = document.querySelector("[data-dropdown]")
       const taskShadow = document.querySelector("[data-task-shadow]")
 
-      const newText = prompt('Имя', targText.innerText)
-      if (newText !== '' && newText) {
-
-         moneyTextAll.forEach((moneyText) => {
-
-            if (moneyText.innerText === targText.innerText) {
-               moneyText.innerText = newText
-            }
-            
-         })
-
-         targText.innerText = newText
-
-      }
-
-      targText.classList.remove('_active')
       targDropdown.remove()
-      taskShadow.classList.remove('_active')
-      document.querySelector("[data-asset-text]._active") && document.querySelector("[data-asset-text]._active").classList.remove('_active')
+      input.value = targText.innerText
+      console.log(`TARGTEXT: ${String(targText.innerText)}`);
 
-      set("taskBody", document.querySelector('[data-task-body]').innerHTML)
+
+      input.addEventListener('keydown', (event) => {
+
+         if (event.key === 'Enter') {
+            event.preventDefault()
+
+            const newText = input.value
+            if (newText !== '' && newText) {
+
+               moneyTextAll.forEach((moneyText) => {
+
+                  if (moneyText.innerText === targText.innerText) {
+                     moneyText.innerText = newText
+                  }
+
+               })
+
+
+               const categorieAll = document.querySelectorAll('[data-money-categorie]')
+               categorieAll.forEach((categorie) => {
+
+                  if (categorie.innerText === targText.innerText) {
+                     categorie.innerText = newText
+                  }
+               })
+
+               targText.innerText = newText
+
+            }
+
+            input.remove()
+
+            targText.classList.remove('_active')
+            taskShadow.classList.remove('_active')
+            document.querySelector("[data-asset-text]._active") && document.querySelector("[data-asset-text]._active").classList.remove('_active')
+            document.querySelector('[data-money-pos-add]').style.display = 'flex'
+            document.querySelector('[data-money-neg-add]').style.display = 'flex'
+
+
+         }
+
+      })
 
    }
 
+   if (targ.closest("[data-asset-convert]")) {
+      targ.closest("[data-asset-convert]").insertAdjacentHTML('afterbegin', document.querySelector('[data-money-categories]').outerHTML)
+      document.querySelector('[data-money-categories]').style = 'top: 0px; right: 100%; display: flex; position: absolute;'
+
+   }
 
    if (targ.closest("[data-cancel]")) {
 
@@ -2339,11 +2257,19 @@ document.addEventListener("click", (event) => {
       const dropDown = document.querySelector('[data-dropdown]')
       const text = document.querySelector('[data-text]._active')
       const assetText = document.querySelector('[data-asset-text]._active')
+      const input = document.querySelector('input[tabindex="-1"]')
+      const assetTextActive = document.querySelector('[data-asset-text]._active')
+
+      document.querySelector('[data-money-pos-add]').style.display = 'flex'
+      document.querySelector('[data-money-neg-add]').style.display = 'flex'
+      document.querySelector('[data-money-categories]').style.display = 'none'
 
       shadow.classList.remove('_active')
-      dropDown.remove()
+      dropDown && dropDown.remove()
       text && text.classList.remove('_active')
       assetText && assetText.classList.remove('_active')
+      assetTextActive && assetTextActive.classList.remove('_active')
+      input && input.remove('_active')
 
    }
 

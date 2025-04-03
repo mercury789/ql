@@ -163,12 +163,8 @@ button, select, input {
   position: fixed;
   z-index: 50;
 }
-[data-money-pos-add]._hidden, [data-money-neg-add]._hidden, [data-pos-add]._hidden, [data-neg-add]._hidden, [data-money-neg-add]._block {
-   display: none;
-}
-[data-mode]._hidden {
-   display: none;
-}
+
+
 
 [data-pos-point], [data-neg-point] {
   position: relative;
@@ -301,9 +297,7 @@ input {
 [data-stat] {
   padding-top: 10px;
 }
-[data-stat]._hidden {
-   display: none;
-}
+
 
 /* Видео на весь экран */
 video {
@@ -341,17 +335,12 @@ video img {
 [data-body]._active {
    display: block;
 }
-[data-body]._hidden {
-   display: none;
-}
+
 [data-task-main] {
    overflow-y: auto; 
    height: 386px;
 }
 [data-task-main]._active {
-   display: none;
-}
-[data-task-main]._hidden {
    display: none;
 }
 
@@ -573,25 +562,6 @@ video {
 
 
 
-[data-chart] {
-   display: none;
-
-}
-[data-chart-2] {
-   display: none;
-
-}
-
-
-[data-chart]._active {
-   display: block;
-}
-[data-chart-2]._active {
-   display: block;
-}
-
-
-
 [data-money] {
    display: none;
 }
@@ -618,9 +588,7 @@ video {
 [data-money-stat] {
    padding-top: 10px;
 }
-[data-money-stat]._hidden {
-   display: none;
-}
+
 
 [data-money-create-categorie] {
    width: 30px;
@@ -644,14 +612,18 @@ video {
   justify-content: center;
   flex-direction: column;
   background-color: rgba(60, 60, 60, 1);
+
   
   position: fixed;
-  z-index: 50;
+  z-index: 1000;
 
   font-size: 14px;
     font-weight: 500;
 
    overflow: hidden;
+}
+[data-asset-convert] {
+   position: relative;
 }
 
 [data-money-categorie] {
@@ -662,6 +634,8 @@ video {
    padding-bottom: 5px;
    padding-left: 10px;
    padding-right: 10px;
+
+   
 }
 
 [data-money-categorie]:not(:last-child) {
@@ -729,3 +703,13 @@ video {
 [data-asset-text]._active {
    color: orange;
 }
+
+/* режим разработчика */
+[data-chart], [data-body], [data-task-main], [data-mode], [data-stat], [data-pos-add], [data-neg-add] {
+   display: none;
+}
+
+/* режим юзера */
+/* [data-chart-2], [data-money-stat], [data-money-pos-add], [data-money-neg-add] {
+   display: none;
+} */
