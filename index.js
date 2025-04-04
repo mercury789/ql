@@ -205,7 +205,7 @@ if (get('barData2') && JSON.parse(get('barData2')).length !== 0) {
 
    var barData2 = [];
    document.querySelector('[data-money-neg-add]').classList.add('_block')
-   document.querySelector('[data-money-pos-add]').style = 'bottom: 10px; right: 10px;'
+   document.querySelector('[data-money-pos-add]').style = 'bottom: 60px; right: 10px;'
 
 }
 
@@ -370,7 +370,7 @@ document.addEventListener("click", (event) => {
 
    }
 
-   if (event.target.closest("[data-fix]")) {
+   if (event.target.closest("[data-footer-name]")) {
       const chart = document.querySelector('[data-chart]')
       const chart2 = document.querySelector('[data-chart-2]')
       const body = document.querySelector('[data-body]')
@@ -378,50 +378,56 @@ document.addEventListener("click", (event) => {
       const mode = document.querySelector('[data-mode]')
       const stat = document.querySelector('[data-stat]')
       const moneyStat = document.querySelector('[data-money-stat]')
+      const att = event.target.closest("[data-footer-name]").getAttribute('data-footer-name')
 
       const moneyPosAdd = document.querySelector('[data-money-pos-add]')
       const moneyNegAdd = document.querySelector('[data-money-neg-add]')
       const posAdd = document.querySelector('[data-pos-add]')
       const negAdd = document.querySelector('[data-neg-add]')
 
+      const mn = document.querySelector('[data-mn]')
+      const ql = document.querySelector('[data-ql]')
+      const note = document.querySelector('[data-note]')
 
-      if (event.target.classList.contains('_active')) {
-         event.target.classList.remove('_active')
+      const footerAll = document.querySelectorAll('[data-footer-name]')
+      footerAll.forEach((footer) => {
+         
+         if (footer.getAttribute('data-footer-name') !== att) {
+            footer.classList.remove('_active')
+            document.querySelector(`[data-${att}]`).style.display = 'none'
+         } else {
+            footer.classList.add('_active')
+            document.querySelector(`[data-${att}]`).style.display = 'block'
 
-         chart2.style.display = 'block'
+         }
+      })
 
-         moneyPosAdd.style.display = 'flex'
-         moneyNegAdd.style.display = 'flex'
-         moneyStat.style.display = 'block'
 
-         chart.style.display = 'none'
-         body.style.display = 'none'
-         task.style.display = 'none'
-         mode.style.display = 'none'
-         stat.style.display = 'none'
-         posAdd.style.display = 'none'
-         negAdd.style.display = 'none'
-
-      } else {
+      if (att === 'mn') {
          event.target.classList.add('_active')
 
-         chart.style.display = 'block'
-
-         body.style.display = 'block'
-         task.style.display = 'block'
-         mode.style.display = 'flex'
-         stat.style.display = 'block'
-         posAdd.style.display = 'flex'
-         negAdd.style.display = 'flex'
-
-
-         chart2.style.display = 'none'
-         moneyPosAdd.style.display = 'none'
-         moneyNegAdd.style.display = 'none'
-         moneyStat.style.display = 'none'
-
+         mn.style.display = 'block'
+         ql.style.display = 'none'
+         note.style.display = 'none'
       }
 
+      if (att === 'ql') {
+         event.target.classList.add('_active')
+
+         mn.style.display = 'none'
+         ql.style.display = 'block'
+         note.style.display = 'none'
+      }
+
+      if (att === 'note') {
+         event.target.classList.add('_active')
+
+         mn.style.display = 'none'
+         ql.style.display = 'none'
+         note.style.display = 'block'
+      }
+
+     
    }
 
 
@@ -438,19 +444,25 @@ document.addEventListener("click", (event) => {
 
          if (inputValue) {
 
+            let today = new Date();
+            let day = today.getDate(); // день
+            let month = today.getMonth() + 1; // месяц (нумерация с 0)
+            let year = today.getFullYear(); // год
+            const date = `${day}${month}${year}`;
+
             if (inputAtt === 'pos') {
                document.querySelector('[data-money]').insertAdjacentHTML('afterbegin', `
                <div data-money-shell>
                <div data-money-text>${text}</div>
-               <div data-money-num data-money-profit>${inputValue.toFixed(2)}</div>
+               <div class="money-flex">
+                  <div data-money-profit>${inputValue.toFixed(2)}</div>
+                  <div data-money-date>${day}.${month}</div>
+               </div>
                </div>
                `)
             } else {
                document.querySelector('[data-money]').insertAdjacentHTML('afterbegin', `
-               <div data-money-shell>
-               <div data-money-text>${text}</div>
-               <div data-money-num data-money-lose>${inputValue.toFixed(2)}</div>
-               </div>
+             
                `)
             }
 
@@ -461,12 +473,6 @@ document.addEventListener("click", (event) => {
             event.target.closest("[data-money-categories]").style.display = 'none'
 
             let num = Number(inputValue)
-
-            let today = new Date();
-            let day = today.getDate(); // день
-            let month = today.getMonth() + 1; // месяц (нумерация с 0)
-            let year = today.getFullYear(); // год
-            const date = `${day}${month}${year}`;
 
             let checkDate = barData2.find(obj => obj.date === date)
 
@@ -570,7 +576,7 @@ document.addEventListener("click", (event) => {
                      barData2.push({ x: Date.now(), o: profitSum, h: profitSum, l: profitSum, c: profitSum, date: date })
 
                      document.querySelector('[data-money-neg-add]').classList.remove('_block')
-                     document.querySelector('[data-money-pos-add]').style = 'bottom: 55px; right: 10px;'
+                     document.querySelector('[data-money-pos-add]').style = 'bottom: 60px; right: 10px;'
 
                      const asset = document.querySelectorAll('[data-asset]')
                      asset.forEach((asset) => {
@@ -601,7 +607,7 @@ document.addEventListener("click", (event) => {
          input = document.createElement('input')
 
          input.type = 'number'
-         input.style = 'position: fixed; bottom: 10px; left: 10px; width: 100px; color: #FCFCFC;'
+         input.style = 'position: fixed; bottom: 60px; left: 10px; width: 100px; color: #FCFCFC;'
          input.setAttribute("tabindex", "-1")
 
          document.body.appendChild(input)
@@ -657,7 +663,7 @@ document.addEventListener("click", (event) => {
       let input = document.createElement('input')
 
       input.type = 'text'
-      input.style = 'position: fixed; bottom: 10px; left: 10px; width: 100px; color: #FCFCFC;'
+      input.style = 'position: fixed; bottom: 60px; left: 10px; width: 100px; color: #FCFCFC;'
       input.setAttribute("tabindex", "-1")
 
       document.body.appendChild(input)
@@ -716,7 +722,7 @@ document.addEventListener("click", (event) => {
       let input = document.createElement('input')
 
       input.type = 'number'
-      input.style = 'position: fixed; bottom: 10px; left: 10px; width: 40px; color: rgb(255, 230, 2);'
+      input.style = 'position: fixed; bottom: 60px; left: 10px; width: 40px; color: rgb(255, 230, 2);'
       input.setAttribute("tabindex", "-1")
       input.setAttribute("data-temp-input", "pos")
 
@@ -735,7 +741,7 @@ document.addEventListener("click", (event) => {
       let input = document.createElement('input')
 
       input.type = 'number'
-      input.style = 'position: fixed; bottom: 10px; left: 10px; width: 40px; color: rgb(255, 99, 132);'
+      input.style = 'position: fixed; bottom: 60px; left: 10px; width: 40px; color: rgb(255, 99, 132);'
       input.setAttribute("tabindex", "-1")
       input.setAttribute("data-temp-input", "neg")
 
@@ -755,13 +761,14 @@ document.addEventListener("click", (event) => {
       let inputSecond = document.createElement('input')
 
       input.type = 'text'
-      input.style = 'position: fixed; bottom: 10px; left: 10px; width: 100px; color: #FCFCFC;'
+      input.style = 'position: fixed; bottom: 60px; left: 10px; width: 100px; color: #FCFCFC;'
       input.setAttribute("tabindex", "-1")
 
 
       inputSecond.type = 'number'
-      inputSecond.style = 'position: fixed; bottom: 10px; left: 135px; width: 40px; color: rgb(75, 192, 192);'
+      inputSecond.style = 'position: fixed; bottom: 60px; left: 135px; width: 40px; color: rgb(75, 192, 192);'
       inputSecond.setAttribute("tabindex", "-1")
+      inputSecond.setAttribute("data-input-second", "")
 
 
       document.body.appendChild(input)
@@ -1040,13 +1047,14 @@ document.addEventListener("click", (event) => {
       let inputSecond = document.createElement('input')
 
       input.type = 'text'
-      input.style = 'position: fixed; bottom: 10px; left: 10px; width: 100px; color: #FCFCFC;'
+      input.style = 'position: fixed; bottom: 60px; left: 10px; width: 100px; color: #FCFCFC;'
       input.setAttribute("tabindex", "-1")
 
 
       inputSecond.type = 'number'
-      inputSecond.style = 'position: fixed; bottom: 10px; left: 135px; width: 40px; color: rgb(255, 99, 132);'
+      inputSecond.style = 'position: fixed; bottom: 60px; left: 135px; width: 40px; color: rgb(255, 99, 132);'
       inputSecond.setAttribute("tabindex", "-1")
+      inputSecond.setAttribute("data-input-second", "")
 
 
       document.body.appendChild(input)
@@ -1467,7 +1475,7 @@ document.addEventListener("click", (event) => {
       input.type = 'number'
 
 
-      input.style = 'position: fixed; bottom: 10px; left: 10px; width: 40px;'
+      input.style = 'position: fixed; bottom: 60px; left: 10px; width: 40px;'
       input.setAttribute("tabindex", "-1")
 
       if (event.target.closest('[data-pos-list]')) {
@@ -1774,7 +1782,7 @@ document.addEventListener("click", (event) => {
       input.type = 'text'
 
 
-      input.style = 'position: fixed; bottom: 10px; left: 10px; width: 80px;'
+      input.style = 'position: fixed; bottom: 60px; left: 10px; width: 80px;'
       input.setAttribute("tabindex", "-1")
 
       document.body.appendChild(input)
@@ -2102,7 +2110,7 @@ document.addEventListener("click", (event) => {
       const input = document.createElement('input')
 
       input.type = 'text'
-      input.style = 'position: fixed; bottom: 10px; left: 10px; width: 100px; color: #FCFCFC;'
+      input.style = 'position: fixed; bottom: 60px; left: 10px; width: 100px; color: #FCFCFC;'
       input.setAttribute("tabindex", "-1")
 
       document.body.appendChild(input)
@@ -2259,6 +2267,7 @@ document.addEventListener("click", (event) => {
       const assetText = document.querySelector('[data-asset-text]._active')
       const input = document.querySelector('input[tabindex="-1"]')
       const assetTextActive = document.querySelector('[data-asset-text]._active')
+      const inputSecond = document.querySelector('[data-input-second]')
 
       document.querySelector('[data-money-pos-add]').style.display = 'flex'
       document.querySelector('[data-money-neg-add]').style.display = 'flex'
@@ -2270,6 +2279,7 @@ document.addEventListener("click", (event) => {
       assetText && assetText.classList.remove('_active')
       assetTextActive && assetTextActive.classList.remove('_active')
       input && input.remove('_active')
+      inputSecond && inputSecond.remove('_active')
 
    }
 

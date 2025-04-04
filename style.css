@@ -162,9 +162,30 @@ button, select, input {
   
   position: fixed;
   z-index: 50;
+
+  
 }
 
-
+[data-pos-add] {
+   right: 10px;
+   bottom: 105px;
+}
+[data-neg-add] {
+   right: 10px;
+   bottom: 60px;
+}
+[data-money-pos-add] {
+   right: 10px;
+   bottom: 105px;
+}
+[data-money-neg-add] {
+   right: 10px;
+   bottom: 60px;
+}
+[data-mode] {
+   left: 10px;
+   bottom: 60px;
+}
 
 [data-pos-point], [data-neg-point] {
   position: relative;
@@ -564,13 +585,15 @@ video {
 
 [data-money] {
    display: none;
+
+   width: 70%;
+
 }
 [data-money-shell] {
    display: flex;
    align-items: center;
    justify-content: space-between;
 
-   width: 60%;
 
    padding-top: 2.5px;
    padding-bottom: 2.5px;
@@ -680,7 +703,7 @@ video {
 [data-assets] {
    display: none;
 
-   width: 70%;
+   width: 60%;
    font-size: 18px;
 }
 [data-assets]._active {
@@ -698,18 +721,59 @@ video {
 }
 
 
-
-
 [data-asset-text]._active {
    color: orange;
 }
 
 /* режим разработчика */
-[data-chart], [data-body], [data-task-main], [data-mode], [data-stat], [data-pos-add], [data-neg-add] {
+[data-ql],[data-note] {
    display: none;
+}
+[data-ql],[data-note],[data-mn] {
+   position: relative;
 }
 
 /* режим юзера */
 /* [data-chart-2], [data-money-stat], [data-money-pos-add], [data-money-neg-add] {
    display: none;
 } */
+
+
+.money-flex {
+   display: flex;
+   align-items: center;
+   gap: 10px;
+}
+
+[data-money-date] {
+   color: gray;
+}
+
+
+
+
+.footer {
+
+   position: fixed;
+   z-index: 2000;
+   bottom: 0px;
+   left: 0px;
+   width: 100%;
+   height: 50px;
+   background-color: rgba(29, 28, 34, 1);
+   color: white;
+
+   display: flex;
+   align-items: center;
+   justify-content: space-around;
+}
+.footer__button {
+
+   padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+.footer__button._active {
+   color: rgb(255, 230, 2);
+}
