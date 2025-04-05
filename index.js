@@ -77,7 +77,6 @@ if (get('bgRang')) {
    document.querySelector('body').style = get('bgRang')
 }
 
-
 var initialDateStr = new Date().toUTCString();
 
 var ctx = document.getElementById('chart').getContext('2d');
@@ -87,6 +86,10 @@ ctx.canvas.height = 700;
 var ctx2 = document.getElementById('chart2').getContext('2d');
 ctx2.canvas.width = 1000;
 ctx2.canvas.height = 700;
+
+var ctx3 = document.getElementById('chart3').getContext('2d');
+ctx3.canvas.width = 1000;
+ctx3.canvas.height = 700;
 
 
 if (get('barData') && JSON.parse(get('barData')).length !== 0) {
@@ -208,10 +211,84 @@ if (get('barData2') && JSON.parse(get('barData2')).length !== 0) {
    document.querySelector('[data-money-pos-add]').style = 'bottom: 60px; right: 10px;'
 
 }
+if (get('barData3') && JSON.parse(get('barData3')).length !== 0) {
+
+   var barData3 = JSON.parse(get('barData3'))
+
+   let endObj = barData3[barData3.length - 1];
+
+   let oldNum = endObj.c;
+
+   // push + upd + save
+
+   let today = new Date();
+   let day = today.getDate(); // день
+   let month = today.getMonth() + 1; // месяц (нумерация с 0)
+   let year = today.getFullYear(); // год
+
+   const date = `${day}${month}${year}`;
+
+   let miss = Number(date) - Number(endObj.date) - 100000
+   console.log(`${miss} = ${Number(date)} - ${Number(endObj.date)}`);
+   console.log(miss);
+
+
+   if (endObj.date !== date) {
+
+      for (let index = miss; index >= 0; index -= 100000) {
+
+         if (index === 0) {
+            barData3.push({ x: Date.now(), o: oldNum, h: oldNum, l: oldNum, c: oldNum, date: date })
+         } else {
+
+            const newX = Number(barData3[barData3.length - 1].x) + 86400000
+            const newDate = Number(barData3[barData3.length - 1].date) + 100000
+
+            barData3.push({ x: newX, o: oldNum, h: oldNum, l: oldNum, c: oldNum, date: newDate })
+         }
+
+      }
+
+
+      if (barData3.length === 3) {
+         if (barData3[0].date === '') {
+            barData3.shift()
+         }
+      }
+
+      set('barData3', JSON.stringify(barData3))
+
+   }
+
+   document.querySelector('[data-note-body]').innerHTML = get('noteBody')
+
+
+} else {
+
+   var barData3 = [];
+
+   let today = new Date();
+   let day = today.getDate(); // день
+   let month = today.getMonth() + 1; // месяц (нумерация с 0)
+   let year = today.getFullYear(); // год
+   const date = `${day}${month}${year}`;
+
+   let zero = 0
+
+   barData3.push({ x: Date.now() - 86400000, o: zero, h: zero, l: zero, c: zero, date: '' })
+
+   barData3.push({ x: Date.now(), o: zero, h: zero, l: zero, c: zero, date: date })
+
+   set('barData3', JSON.stringify(barData3))
+   const note = document.querySelector('[data-note-body]').innerHTML
+   set('note', note)
+
+}
 
 
 var lineData = barData.map(data => ({ x: data.x, y: data.c }));
 var lineData2 = barData.map(data => ({ x: data.x, y: data.c }));
+var lineData3 = barData.map(data => ({ x: data.x, y: data.c }));
 
 var chart = new Chart(ctx, {
    type: 'candlestick',
@@ -258,6 +335,36 @@ var chart2 = new Chart(ctx2, {
             label: '',
             type: 'line',
             data: lineData2,
+            hidden: true,
+         }
+
+      ]
+   }
+});
+var chart3 = new Chart(ctx3, {
+   type: 'candlestick',
+   data: {
+      datasets: [
+         {
+            label: '',
+            data: barData3,
+
+            borderColor: '#100F14',
+            backgroundColors: {
+               up: 'rgba(100, 75, 192, 0.5)',
+               down: 'rgba(255, 99, 132, 0.5)',
+               unchanged: 'rgba(201, 203, 207, 0.5)',
+            },
+            borderColors: {
+               up: 'rgb(100, 75, 192)',
+               down: 'rgb(255, 99, 132)',
+               unchanged: 'rgb(201, 203, 207)',
+            }
+         },
+         {
+            label: '',
+            type: 'line',
+            data: lineData3,
             hidden: true,
          }
 
@@ -350,40 +457,34 @@ if (get('moneyStat')) {
   `
 
 }
+if (get('noteStat')) {
+   document.querySelector('[data-note-stat]').innerHTML = get('noteStat')
+
+
+} else {
+
+   document.querySelector('[data-note-stat]').innerHTML = `
+  
+   <div class="stat-top">
+      <div class="icon"><img data-note-rang src="icon/0.png"></div>
+      <span> </span>
+      <span class='name'>NT/PRC</span>
+      <span> </span>
+      <span data-statnote-procent>0.00</span>
+   </div>
+ 
+   <div><span data-statnote-num>0.00</span><span> </span></div>
+  
+   <div>⠀</div>
+  
+  `
+
+}
 
 document.addEventListener("click", (event) => {
 
-   if (event.target.closest("[data-mode]")) {
-
-      if (event.target.classList.contains('_active')) {
-         event.target.classList.remove('_active')
-
-         document.querySelector('[data-body]').style.display = 'block'
-         document.querySelector('[data-task-main]').style.display = 'none'
-
-      } else {
-         event.target.classList.add('_active')
-
-         document.querySelector('[data-body]').style.display = 'none'
-         document.querySelector('[data-task-main]').style.display = 'block'
-      }
-
-   }
-
    if (event.target.closest("[data-footer-name]")) {
-      const chart = document.querySelector('[data-chart]')
-      const chart2 = document.querySelector('[data-chart-2]')
-      const body = document.querySelector('[data-body]')
-      const task = document.querySelector('[data-task-main]')
-      const mode = document.querySelector('[data-mode]')
-      const stat = document.querySelector('[data-stat]')
-      const moneyStat = document.querySelector('[data-money-stat]')
       const att = event.target.closest("[data-footer-name]").getAttribute('data-footer-name')
-
-      const moneyPosAdd = document.querySelector('[data-money-pos-add]')
-      const moneyNegAdd = document.querySelector('[data-money-neg-add]')
-      const posAdd = document.querySelector('[data-pos-add]')
-      const negAdd = document.querySelector('[data-neg-add]')
 
       const mn = document.querySelector('[data-mn]')
       const ql = document.querySelector('[data-ql]')
@@ -391,7 +492,7 @@ document.addEventListener("click", (event) => {
 
       const footerAll = document.querySelectorAll('[data-footer-name]')
       footerAll.forEach((footer) => {
-         
+
          if (footer.getAttribute('data-footer-name') !== att) {
             footer.classList.remove('_active')
             document.querySelector(`[data-${att}]`).style.display = 'none'
@@ -427,7 +528,7 @@ document.addEventListener("click", (event) => {
          note.style.display = 'block'
       }
 
-     
+
    }
 
 
@@ -685,8 +786,6 @@ document.addEventListener("click", (event) => {
                </div>
             `)
 
-            console.log(99999);
-
 
          }
 
@@ -710,6 +809,52 @@ document.addEventListener("click", (event) => {
 
       })
 
+   }
+
+   if (event.target.closest("[data-note-add]")) {
+      document.querySelector('[data-note-add]').style.display = 'none'
+      document.querySelector("[data-task-shadow]").classList.add('_active')
+
+
+      let input = document.createElement('input')
+
+      input.type = 'text'
+      input.style = 'position: fixed; bottom: 60px; left: 10px; width: 100px; color: rgb(255, 230, 2);'
+      input.setAttribute("tabindex", "-1")
+
+      document.body.appendChild(input)
+
+      input.focus()
+
+      function mainText() {
+
+         document.querySelector('[data-note]').insertAdjacentHTML('beforeend', `
+                  <div data-note-point>
+                   <div data-note-text>${input.value}</div>
+                  </div>
+            `)
+
+      }
+
+      input.addEventListener('keydown', (event) => {
+
+         if (event.key === 'Enter') {
+            event.preventDefault()
+
+            if (input.value && input.value !== '') {
+
+               mainText()
+
+               input.remove()
+
+               document.querySelector('[data-note-add]').style.display = 'flex'
+               document.querySelector("[data-task-shadow]").classList.remove('_active')
+            }
+
+
+         }
+
+      })
    }
 
    if (event.target.closest("[data-money-pos-add]")) {
@@ -756,6 +901,7 @@ document.addEventListener("click", (event) => {
       document.querySelector('[data-pos-add]').style.display = 'none'
       document.querySelector('[data-neg-add]').style.display = 'none'
       document.querySelector('[data-mode]').style.display = 'none'
+      document.querySelector('[data-task-shadow]').classList.add('_active')
 
       let input = document.createElement('input')
       let inputSecond = document.createElement('input')
@@ -1029,6 +1175,7 @@ document.addEventListener("click", (event) => {
             document.querySelector('[data-pos-add]').style.display = 'flex'
             document.querySelector('[data-neg-add]').style.display = 'flex'
             document.querySelector('[data-mode]').style.display = 'flex'
+            document.querySelector('[data-task-shadow]').classList.remove('_active')
 
          }
 
@@ -1041,6 +1188,7 @@ document.addEventListener("click", (event) => {
       document.querySelector('[data-pos-add]').style.display = 'none'
       document.querySelector('[data-neg-add]').style.display = 'none'
       document.querySelector('[data-mode]').style.display = 'none'
+      document.querySelector('[data-task-shadow]').classList.add('_active')
 
 
       let input = document.createElement('input')
@@ -1310,6 +1458,8 @@ document.addEventListener("click", (event) => {
             document.querySelector('[data-pos-add]').style.display = 'flex'
             document.querySelector('[data-neg-add]').style.display = 'flex'
             document.querySelector('[data-mode]').style.display = 'flex'
+            document.querySelector('[data-task-shadow]').classList.remove('_active')
+
 
          }
 
@@ -1873,8 +2023,9 @@ document.addEventListener("click", (event) => {
       const targNum = targShell.querySelector('[data-num]')
       const targMax = targShell.querySelector('[data-max]')
       const targDate = targShell.querySelector('[data-date]')
+      const rewardNum = Number(targShell.getAttribute('data-reward'))
 
-      const num = targNum.innerText
+      let num = Number(targNum.innerText)
       const newNum = Number(num) + 1
       const procent = newNum / Number(targMax.innerText) * 100
 
@@ -1891,13 +2042,93 @@ document.addEventListener("click", (event) => {
 
       if (newNum === Number(targMax.innerText)) {
          targShell.querySelector("[data-task-decor]").style = `width: ${procent}%; transition: width 0.3s ease 0s;`
-         targShell.querySelector("[data-info]").style = `color: rgb(75, 192, 192);`
+         targShell.querySelector("[data-info]").style = `color: rgba(100, 75, 192, 1)`
 
          video('task')
          console.log('task');
 
-
       }
+
+      let today = new Date();
+      let day = today.getDate(); // день
+      let month = today.getMonth() + 1; // месяц (нумерация с 0)
+      let year = today.getFullYear(); // год
+
+      const date = `${day}${month}${year}`;
+
+      let checkDate = barData3.find(obj => obj.date === date)
+
+      num = rewardNum
+
+      if (checkDate) {
+
+         const profitClose = checkDate.c + num
+         const cleanProfitUP = profitClose - checkDate.o
+         const cleanProfitDOWN = checkDate.o - profitClose
+         checkDate.c = profitClose
+
+         const statNum = document.querySelector('[data-statnote-num]')
+         const statProcent = document.querySelector('[data-statnote-procent]')
+
+         statNum.innerText = profitClose.toFixed(2)
+         if (profitClose >= checkDate.o) {
+            statProcent.innerText = `+${cleanProfitUP.toFixed(2)}`
+            statNum.style = 'color: rgb(100, 75, 192);'
+            statProcent.style = 'color: rgb(100, 75, 192); background-color: rgba(100, 75, 192, 0.5);'
+         } else {
+            statProcent.innerText = `-${cleanProfitDOWN.toFixed(2)}`
+            statNum.style = 'color:  rgb(255, 99, 132);'
+            statProcent.style = 'color:  rgb(255, 99, 132); background-color: rgba(255, 99, 132, 0.5);'
+         }
+         set('noteStat', document.querySelector('[data-note-stat]').innerHTML)
+
+         if (profitClose >= checkDate.h) {
+            checkDate.h = profitClose
+         }
+
+         chart3.update()
+
+         set('barData3', JSON.stringify(barData3))
+         const noteBody = document.querySelector('[data-note-body]').innerHTML
+         set('noteBody', noteBody)
+
+      } else {
+
+         if (num) {
+
+            if (document.querySelector('[data-money-start]')) {
+
+               document.querySelector('[data-money-start]').remove()
+
+               let profitSum = Number(document.querySelector('[data-money-profit]').innerText)
+
+               barData2.push({ x: Date.now() - 86400000, o: profitSum, h: profitSum, l: profitSum, c: profitSum, date: '' })
+
+               barData2.push({ x: Date.now(), o: profitSum, h: profitSum, l: profitSum, c: profitSum, date: date })
+
+               document.querySelector('[data-money-neg-add]').classList.remove('_block')
+               document.querySelector('[data-money-pos-add]').style = 'bottom: 60px; right: 10px;'
+
+               const asset = document.querySelectorAll('[data-asset]')
+               asset.forEach((asset) => {
+                  if (asset.querySelector('[data-asset-text]').innerText === text) {
+                     const newAssetNum = Number(asset.querySelector('[data-asset-num]').innerText) + inputValue
+                     asset.querySelector('[data-asset-num]').innerText = newAssetNum.toFixed(2)
+                  }
+               })
+
+               set('barData2', JSON.stringify(barData2))
+               chart2.update()
+               const money = document.querySelector('[data-money]').innerHTML
+               set('money', money)
+
+            }
+
+         }
+      }
+
+
+
 
 
       set("taskBody", document.querySelector('[data-task-body]').innerHTML)
@@ -2269,8 +2500,11 @@ document.addEventListener("click", (event) => {
       const assetTextActive = document.querySelector('[data-asset-text]._active')
       const inputSecond = document.querySelector('[data-input-second]')
 
+      document.querySelector('[data-note-add]').style.display = 'flex'
       document.querySelector('[data-money-pos-add]').style.display = 'flex'
       document.querySelector('[data-money-neg-add]').style.display = 'flex'
+      document.querySelector('[data-pos-add]').style.display = 'flex'
+      document.querySelector('[data-neg-add]').style.display = 'flex'
       document.querySelector('[data-money-categories]').style.display = 'none'
 
       shadow.classList.remove('_active')
@@ -2285,6 +2519,8 @@ document.addEventListener("click", (event) => {
 
 })
 
+const container = document.querySelector('[data-note]');
+container.scrollTop = container.scrollHeight;
 
 const fileInput = document.getElementById('fileInput');
 
